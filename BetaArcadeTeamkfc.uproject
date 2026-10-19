@@ -1,15 +1,22 @@
 {
-	"FileVersion": 3,
-	"EngineAssociation": "5.8",
-	"Category": "",
-	"Description": "",
-	"Plugins": [
-		{
-			"Name": "ModelingToolsEditorMode",
-			"Enabled": true,
-			"TargetAllowList": [
-				"Editor"
-			]
-		}
-	]
+  "FileVersion": 3,
+  "EngineAssociation": "5.8",
+  "Category": "",
+  "Description": "",
+  "Plugins": [
+    {
+      "Name": "ModelingToolsEditorMode",
+      "Enabled": true,
+      "TargetAllowList": [
+        "Editor"
+      ]
+    }
+  ],
+  "Modules": [
+    {
+      "Name": "BetaArcadeTeamkfc",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    }
+  ]
 }
