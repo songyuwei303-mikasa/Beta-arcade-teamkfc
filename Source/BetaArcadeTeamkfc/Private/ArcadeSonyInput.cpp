@@ -21,7 +21,8 @@ struct FArcadeSonyInput::FImpl
         FString Name;
     };
     FDevice Devices[4];
-    double NextEnumeration = 0;
+    // EnumDevices on the game thread hitches (INF parse / DINPUT critical section). Scan only on demand.
+    bool bScanDevices = true;
     FImpl()
     {
         if (FAILED(DirectInput8Create(GetModuleHandleW(nullptr), DIRECTINPUT_VERSION, IID_IDirectInput8W,
@@ -74,16 +75,23 @@ struct FArcadeSonyInput::FImpl
 };
 FArcadeSonyInput::FArcadeSonyInput() : Impl(MakeUnique<FImpl>()) {}
 FArcadeSonyInput::~FArcadeSonyInput() = default;
+void FArcadeSonyInput::RequestDeviceScan()
+{
+#if PLATFORM_WINDOWS
+    Impl->bScanDevices = true;
+#endif
+}
 void FArcadeSonyInput::Poll(FArcadeInputState* Out, float DeadZone)
 {
     for (int32 I = 0; I < 4; ++I) Out[I] = FArcadeInputState();
 #if PLATFORM_WINDOWS
     if (!Impl->Input) return;
-    if (FPlatformTime::Seconds() >= Impl->NextEnumeration)
+    if (Impl->bScanDevices)
     {
-        Impl->NextEnumeration = FPlatformTime::Seconds() + 1.0;
+        Impl->bScanDevices = false;
         Impl->Input->EnumDevices(DI8DEVCLASS_GAMECTRL, &FImpl::Enumerate, Impl.Get(), DIEDFL_ATTACHEDONLY);
     }
+    bool bLostDevice = false;
     for (int32 I = 0; I < 4; ++I)
     {
         auto& D = Impl->Devices[I];
@@ -91,7 +99,11 @@ void FArcadeSonyInput::Poll(FArcadeInputState* Out, float DeadZone)
         if (FAILED(D.Handle->Poll())) { D.Handle->Acquire(); D.Handle->Poll(); }
         DIJOYSTATE2 State{};
         if (FAILED(D.Handle->GetDeviceState(sizeof(State), &State)))
-        { FImpl::Close(D); continue; }
+        {
+            FImpl::Close(D);
+            bLostDevice = true;
+            continue;
+        }
         auto& P = Out[I];
         P.bConnected = true;
         P.DeviceName = D.Name;
@@ -101,5 +113,7 @@ void FArcadeSonyInput::Poll(FArcadeInputState* Out, float DeadZone)
         P.bConfirm = ((State.rgbButtons[0] | State.rgbButtons[1]) & 0x80) != 0;
         P.bExit = (State.rgbButtons[2] & 0x80) != 0;
     }
+    // Re-scan next poll so a same-identity reconnect can reopen the reserved slot.
+    if (bLostDevice) Impl->bScanDevices = true;
 #endif
 }

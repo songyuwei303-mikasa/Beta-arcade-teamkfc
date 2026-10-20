@@ -2,9 +2,9 @@
 
 ## 运行
 
-本工程现在包含原生 C++ 模块 BetaArcadeTeamkfc。打开工程后，使用项目默认 GameMode 按 Play，会显示输入测试面板。不需要连接蓝图节点。
+本工程包含原生 C++ 模块 BetaArcadeTeamkfc。项目默认现为正式 ArcadeBoardGameMode、启动地图为 L_Main；配置见 [BoardMovement.md](BoardMovement.md)。正式 Controller 不会创建输入测试面板。
 
-如果某张地图已有 GameMode Override，把它设为 None（继承项目默认值），或临时选择 ArcadeInputDemoGameMode。该 GameMode 只是输入测试工作台，正式棋盘实现时应替换；输入 Subsystem 不依赖它。
+要使用输入测试面板，请打开 L_TestingLevel，在 World Settings 的 GameMode Override 明确选择 ArcadeInputDemoGameMode 后按 Play，无需连接蓝图节点。None 现会继承正式 GameMode。Demo 仍是独立输入测试工作台，输入 Subsystem 不依赖它。
 
 面板使用英文以避免系统字体缺少中文字形。蓝色为 P1 的导航选择，橙色为 P2，紫色表示两人选中同一个按钮。鼠标可以直接点击任意按钮。方向导航采用列表顺序、循环和按住重复（首次 0.4 秒，后续 0.12 秒）。选择按键在按下时触发 OnClicked；同时按着两个确认键只算一次确认。
 
@@ -37,6 +37,8 @@ Set Input Receiver 会取消旧目标的输入，并要求输入回到中立，�
 
 Get Seat State 可观察当前来源、连接状态、方向和按钮状态。On Seat Changed 通知分配/断连/重连。Get Available Sources、Assign Seat、Auto Assign Seats 可用于后续输入选择界面；Assign Seat 拒绝占用另一个席位的设备，交换设备需要先解除原分配。None 表示解除分配。
 
+小游戏阶段 A 接入见 [MinigameSession.md](MinigameSession.md)：由 ArcadeMinigameSubsystem 创建 Run，会话作为 ArcadeInputReceiver 接收并过滤输入，再转发到入口蓝图。小游戏作者不自行 SetInputReceiver 到入口，也不重绑物理按键；结束由会话按接收权恢复原目标。
+
 ## UI
 
 测试面板新增 Toggle UI navigation / input-only test 按钮。关闭导航后仍显示方向和按键事件，但不会导航或激活按钮；鼠标仍可操作。该开关只影响测试面板，不改变公共输入接口。
@@ -45,13 +47,13 @@ Get Seat State 可观察当前来源、连接状态、方向和按钮状态。On
 
 这是显式列表导航，不是自动发现任意 Widget 的空间布局；文本输入框、滑条和复杂网格导航不在第一版支持范围。面板消失时自动解除仍指向它的接收对象。以后若自行覆盖接口事件，应按需调用父类实现来保留导航。
 
-鼠标展示/输入模式目前由测试 Controller 设置；将来正式 Controller 应设置 GameAndUI、取消鼠标锁定，并由 Subsystem 控制 bShowMouseCursor。不要再将鼠标轴或按键接到玩法对象。
+测试 Controller 和正式 ArcadeBoardController 均设置 GameAndUI、取消鼠标锁定，并由 Subsystem 控制 bShowMouseCursor。正式 Controller 不创建测试面板。不要再将鼠标轴或按键接到玩法对象。
 
 ## 实现边界
 
 - 来源层为 Slate 键盘预处理器 + Windows XInput 轮询 + Sony DirectInput 后端；没有将这两种后端伪装成两名 UE LocalPlayer，也没有创建 Enhanced Input 资源。两套键盘是同一硬件上的逻辑来源。
 - 采用这一实现是为了在按键进入 UMG 前统一消费自定义确认/退出映射，并在第一帧识别 XInput 手柄。后续增加其它设备后端时应保持接收接口不变。
-- XInput 支持 Xbox/兼容手柄；Sony 后端覆盖上述原装 PS4/PS5 型号的 Windows 标准 HID 布局，设备每秒发现一次、已连接设备逐帧读取。PS3、未知第三方型号和 Switch 尚未支持。非 Windows 平台目前只有键盘来源。原生 Sony 后端不需要 DS4Windows；若同时使用虚拟 Xbox 映射且未隐藏原始手柄，可能出现同一手柄两份来源，不应把两份都分配给玩家。某些软件切换的蓝牙增强报告模式不符合 Windows 标准 DirectInput 布局，应退出该软件并重新连接原生模式。
+- XInput 支持 Xbox/兼容手柄；Sony 后端覆盖上述原装 PS4/PS5 型号的 Windows 标准 HID 布局。**不要在游戏线程上每秒调用 `IDirectInput8::EnumDevices`**：该调用会解析设备 INF 并占用 DirectInput 全局临界区，可造成约 1 秒一次的卡顿；卡顿帧的大 `DeltaSeconds` 会让仍按住方向的角色“闪现”前进。当前策略：首次轮询扫描一次；已知 Sony 设备读取失败（断连）后下一帧再扫；`AutoAssignSeats`／测试面板 Reassign 时显式 `RequestDeviceScan`。已连接设备仍逐帧 `Poll`/`GetDeviceState`。运行中新插入的 PS 手柄不会自动出现在来源列表，需 Reassign／AutoAssign。PS3、未知第三方型号和 Switch 尚未支持。非 Windows 平台目前只有键盘来源。原生 Sony 后端不需要 DS4Windows；若同时使用虚拟 Xbox 映射且未隐藏原始手柄，可能出现同一手柄两份来源，不应把两份都分配给玩家。某些软件切换的蓝牙增强报告模式不符合 Windows 标准 DirectInput 布局，应退出该软件并重新连接原生模式。
 - 只处理当前游戏视口拥有焦点时的玩家输入。失焦取消所有输入，避免后台窗口控制游戏。鼠标事件继续交给原生 UMG。
 - 当前按键由代码固定，来源选择接口已暴露；任意重绑定界面尚未实现。
 - 输入取消/连接变化是基础通知，不会自行实施整个游戏的暂停。正式游戏应监听后决定暂停/重连策略。

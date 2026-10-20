@@ -2,6 +2,18 @@
 #include "Engine/GameInstance.h"
 #include "Misc/AutomationTest.h"
 #include "ArcadeGamepadMath.h"
+#include "ArcadeBoardCharacter.h"
+#include "ArcadeBoardGameMode.h"
+#include "Engine/World.h"
+#include "Engine/Engine.h"
+#include "Engine/Level.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/WorldSettings.h"
+#include "UObject/Package.h"
+#include "Components/BoxComponent.h"
+#include "ArcadeMinigame.h"
+#include "ArcadeMinigameTestGameMode.h"
+#include "Camera/CameraActor.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
 struct FArcadeInputTestAccess
@@ -10,6 +22,7 @@ struct FArcadeInputTestAccess
     static void Pad(UArcadeInputSubsystem* S, int32 Index, bool Connected, bool Confirm = false)
     { S->Pads[Index].bConnected = Connected; S->Pads[Index].bConfirm = Confirm; }
     static void Process(UArcadeInputSubsystem* S, int32 Seat) { S->ProcessSeat(Seat, true); }
+    static void Cancel(UArcadeInputSubsystem* S, int32 Seat) { S->CancelSeat(Seat); }
 };
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FArcadeKeyboardTest, "Arcade.Input.KeyboardMappings", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
@@ -92,6 +105,248 @@ bool FArcadeDPadTest::RunTest(const FString&)
     FArcadeInputTestAccess::Pad(S, 4, false);
     FArcadeInputTestAccess::Process(S, 0);
     TestFalse(TEXT("PS disconnect cancels confirm"), S->GetSeatState(0).bConfirm);
+    return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FArcadeBoardRoutingTest, "Arcade.Input.BoardReceiverLifecycle", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FArcadeBoardRoutingTest::RunTest(const FString&)
+{
+    UWorld* World = UWorld::CreateWorld(EWorldType::Game, false);
+    GEngine->CreateNewWorldContext(EWorldType::Game).SetCurrentWorld(World);
+    World->InitializeActorsForPlay(FURL());
+    World->GetWorldSettings()->NotifyBeginPlay();
+    auto* Floor = World->SpawnActor<AActor>();
+    auto* FloorBox = NewObject<UBoxComponent>(Floor);
+    Floor->SetRootComponent(FloorBox);
+    FloorBox->SetBoxExtent(FVector(2000, 2000, 50));
+    FloorBox->SetCollisionProfileName(TEXT("BlockAll"));
+    FloorBox->RegisterComponent();
+    Floor->SetActorLocation(FVector(0, 0, -138));
+    auto* P1 = World->SpawnActor<AArcadeBoardCharacter>();
+    auto* P2 = World->SpawnActor<AArcadeBoardCharacter>(FVector(0, 300, 0), FRotator::ZeroRotator);
+    if (!TestNotNull(TEXT("P1 spawned"), P1) || !TestNotNull(TEXT("P2 spawned"), P2))
+    {
+        World->EndPlay(EEndPlayReason::Quit);
+        GEngine->DestroyWorldContext(World);
+        World->DestroyWorld(false);
+        return false;
+    }
+    P1->InitializeSeat(0, 0);
+    P2->InitializeSeat(1, 0);
+    auto* S = NewObject<UArcadeInputSubsystem>(NewObject<UGameInstance>());
+    S->AssignSeat(0, EArcadeInputSource::Keyboard1);
+    S->AssignSeat(1, EArcadeInputSource::Keyboard2);
+    TestTrue(TEXT("Bind P1 interface"), S->SetInputReceiver(0, P1));
+    TestTrue(TEXT("Bind P2 interface"), S->SetInputReceiver(1, P2));
+    FArcadeInputTestAccess::Process(S, 0);
+    FArcadeInputTestAccess::Process(S, 1);
+    S->HandleKey(EKeys::W, true);
+    S->HandleKey(EKeys::Right, true);
+    FArcadeInputTestAccess::Process(S, 0);
+    FArcadeInputTestAccess::Process(S, 1);
+    TestEqual(TEXT("P1 received up"), P1->GetMoveDirection(), FVector2D(0, 1));
+    TestEqual(TEXT("P2 received right"), P2->GetMoveDirection(), FVector2D(1, 0));
+    TestNull(TEXT("P1 does not need a controller"), P1->GetController());
+    P1->Tick(1.f / 60.f);
+    TestEqual(TEXT("Cached up feeds world X without possession"), P1->GetPendingMovementInputVector(), FVector(1, 0, 0));
+    for (int32 Frame = 0; Frame < 60; ++Frame)
+    {
+        ++GFrameCounter; // Synchronous automation must advance the engine frame for tick scheduling.
+        World->Tick(LEVELTICK_All, 1.f / 60.f);
+    }
+    AddInfo(FString::Printf(TEXT("Movement: P1=%s P2=%s Mode=%d Velocity=%s"), *P1->GetActorLocation().ToString(), *P2->GetActorLocation().ToString(), int32(P1->GetCharacterMovement()->MovementMode), *P1->GetVelocity().ToString()));
+    TestTrue(TEXT("Unpossessed P1 actually walks forward"), P1->GetActorLocation().X > 100.f);
+    TestTrue(TEXT("Unpossessed P2 actually walks right"), P2->GetActorLocation().Y > 400.f);
+    TestTrue(TEXT("Floor collision supports P1"), FMath::Abs(P1->GetActorLocation().Z) < 10.f);
+    P1->GetCharacterMovement()->Velocity = FVector(400, 0, 0);
+    S->SetInputReceiver(0, nullptr); // Same handoff path as a menu.
+    TestTrue(TEXT("Handoff clears cached movement"), P1->GetMoveDirection().IsNearlyZero());
+    TestTrue(TEXT("Handoff clears pending movement"), P1->GetPendingMovementInputVector().IsNearlyZero());
+    TestTrue(TEXT("Handoff stops velocity immediately"), P1->GetVelocity().IsNearlyZero());
+    TestEqual(TEXT("Other seat keeps moving"), P2->GetMoveDirection(), FVector2D(1, 0));
+    S->SetInputReceiver(0, P1);
+    FArcadeInputTestAccess::Process(S, 0);
+    TestTrue(TEXT("Held input cannot leak on return"), P1->GetMoveDirection().IsNearlyZero());
+    S->HandleKey(EKeys::W, false);
+    FArcadeInputTestAccess::Process(S, 0);
+    S->HandleKey(EKeys::W, true);
+    FArcadeInputTestAccess::Process(S, 0);
+    TestEqual(TEXT("Fresh input after neutral resumes"), P1->GetMoveDirection(), FVector2D(0, 1));
+    FArcadeInputTestAccess::Cancel(S, 0);
+    TestTrue(TEXT("Focus/disconnect cancellation stops character"), P1->GetMoveDirection().IsNearlyZero());
+    IArcadeInputReceiver::Execute_ArcadeDirection(P1, 1, FVector2D(1, 1));
+    TestTrue(TEXT("Wrong seat rejected"), P1->GetMoveDirection().IsNearlyZero());
+    S->SetInputReceiver(0, nullptr);
+    S->SetInputReceiver(1, nullptr);
+    World->EndPlay(EEndPlayReason::Quit);
+    GEngine->DestroyWorldContext(World);
+    World->DestroyWorld(false);
+    return true;
+}
+
+struct FArcadeMinigameTestAccess
+{
+    static UArcadeMinigameSession* Prepare(UArcadeMinigameSubsystem* Manager, int32 Seat, AArcadeMinigameEntry* Entry, UArcadeInputSubsystem* Input)
+    { return Manager->PrepareWithInput(Seat, Entry, Input); }
+    static void StartPrepared(AArcadeMinigameTestGameMode* Mode, UArcadeMinigameSession* Run)
+    {
+        Mode->TestSession = Run;
+        Mode->TryStartPreparedSession();
+    }
+};
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FArcadeMinigameTestHostTest, "Arcade.Minigame.StandaloneHost", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FArcadeMinigameTestHostTest::RunTest(const FString&)
+{
+    UWorld* World = UWorld::CreateWorld(EWorldType::Game, false);
+    GEngine->CreateNewWorldContext(EWorldType::Game).SetCurrentWorld(World);
+    World->InitializeActorsForPlay(FURL());
+    World->GetWorldSettings()->NotifyBeginPlay();
+    auto* Host = World->SpawnActor<AArcadeMinigameTestGameMode>();
+    AArcadeMinigameEntry* FoundEntry = nullptr;
+    ACameraActor* FoundCamera = nullptr;
+    TestFalse(TEXT("Empty test map rejected"), Host->FindTestActors(FoundEntry, FoundCamera));
+    auto* Entry = World->SpawnActor<AArcadeMinigameEntry>();
+    auto* Camera = World->SpawnActor<ACameraActor>();
+    Camera->Tags.Add(TEXT("ArcadeMinigameCamera"));
+    TestTrue(TEXT("Unique entry/camera found"), Host->FindTestActors(FoundEntry, FoundCamera));
+    TestTrue(TEXT("Exact entry returned"), FoundEntry == Entry);
+    auto* Duplicate = World->SpawnActor<AArcadeMinigameEntry>();
+    TestFalse(TEXT("Ambiguous entries rejected"), Host->FindTestActors(FoundEntry, FoundCamera));
+    Duplicate->Destroy();
+    TestNull(TEXT("No default player pawn"), Host->DefaultPawnClass.Get());
+    TestTrue(TEXT("Controller does not inherit demo"), Host->PlayerControllerClass == AArcadeBoardController::StaticClass());
+    auto* Input = NewObject<UArcadeInputSubsystem>(NewObject<UGameInstance>());
+    auto* Run = FArcadeMinigameTestAccess::Prepare(World->GetSubsystem<UArcadeMinigameSubsystem>(), 0, Entry, Input);
+    if (TestNotNull(TEXT("Existing session API used"), Run))
+    {
+        FArcadeMinigameTestAccess::StartPrepared(Host, Run);
+        TestEqual(TEXT("Host starts ready session"), Run->State, EArcadeMinigameState::Running);
+        TestTrue(TEXT("Session retains input"), Input->GetInputReceiver(0) == Run);
+        IArcadeInputReceiver::Execute_ArcadeButton(Run, 0, EArcadeInputAction::Exit, true);
+        TestEqual(TEXT("Exit does not end gameplay"), Run->State, EArcadeMinigameState::Running);
+        TestTrue(TEXT("Normal finish still works"), Run->Finish(1.25));
+        FArcadeMinigameTestAccess::StartPrepared(Host, Run);
+        TestEqual(TEXT("Host does not restart ended run"), Run->State, EArcadeMinigameState::Ended);
+    }
+    World->EndPlay(EEndPlayReason::Quit);
+    GEngine->DestroyWorldContext(World);
+    World->DestroyWorld(false);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FArcadeMinigameSessionTest, "Arcade.Minigame.SessionLifecycle", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FArcadeMinigameSessionTest::RunTest(const FString&)
+{
+    UWorld* World = UWorld::CreateWorld(EWorldType::Game, false);
+    GEngine->CreateNewWorldContext(EWorldType::Game).SetCurrentWorld(World);
+    World->InitializeActorsForPlay(FURL());
+    World->GetWorldSettings()->NotifyBeginPlay();
+    auto* Manager = World->GetSubsystem<UArcadeMinigameSubsystem>();
+    auto* Input = NewObject<UArcadeInputSubsystem>(NewObject<UGameInstance>());
+    auto* Board0 = World->SpawnActor<AArcadeBoardCharacter>();
+    auto* Board1 = World->SpawnActor<AArcadeBoardCharacter>(FVector(0, 300, 0), FRotator::ZeroRotator);
+    auto* Entry0 = World->SpawnActor<AArcadeMinigameEntry>();
+    auto* Entry1 = World->SpawnActor<AArcadeMinigameEntry>();
+    Board0->InitializeSeat(0, 0);
+    Board1->InitializeSeat(1, 0);
+    Input->AssignSeat(0, EArcadeInputSource::Keyboard1);
+    Input->AssignSeat(1, EArcadeInputSource::Keyboard2);
+    Input->SetInputReceiver(0, Board0);
+    Input->SetInputReceiver(1, Board1);
+    FArcadeInputTestAccess::Process(Input, 0);
+    FArcadeInputTestAccess::Process(Input, 1);
+    Input->HandleKey(EKeys::W, true);
+    Input->HandleKey(EKeys::Right, true);
+    FArcadeInputTestAccess::Process(Input, 0);
+    FArcadeInputTestAccess::Process(Input, 1);
+
+    auto Prepare = [&](int32 Seat, AArcadeMinigameEntry* Entry)
+    { return FArcadeMinigameTestAccess::Prepare(Manager, Seat, Entry, Input); };
+    TestNull(TEXT("Invalid seat rejected"), Prepare(2, Entry0));
+    auto* Run0 = Prepare(0, Entry0);
+    if (!TestNotNull(TEXT("Create session"), Run0)) return false;
+    TestEqual(TEXT("Default preparation marks ready"), Run0->State, EArcadeMinigameState::Ready);
+    TestTrue(TEXT("Board cancelled during preparation"), Board0->GetMoveDirection().IsNearlyZero());
+    TestEqual(TEXT("Other board remains independent"), Board1->GetMoveDirection(), FVector2D(1, 0));
+    TestNull(TEXT("Seat cannot reserve a second session"), Prepare(0, Entry1));
+    TestNull(TEXT("Entry cannot be shared concurrently"), Prepare(1, Entry0));
+    TestFalse(TEXT("Cannot finish before Start"), Run0->Finish(100));
+    TestTrue(TEXT("Ready starts"), Run0->Start());
+    TestFalse(TEXT("Cannot start twice"), Run0->Start());
+    FArcadeInputTestAccess::Process(Input, 0);
+    TestTrue(TEXT("Entry press/held movement cannot leak"), Run0->Direction.IsNearlyZero());
+    Input->HandleKey(EKeys::W, false);
+    FArcadeInputTestAccess::Process(Input, 0);
+    Input->HandleKey(EKeys::W, true);
+    Input->HandleKey(EKeys::SpaceBar, true);
+    FArcadeInputTestAccess::Process(Input, 0);
+    TestEqual(TEXT("Run receives direction"), Run0->Direction, FVector2D(0, 1));
+    TestTrue(TEXT("Run receives confirm"), Run0->bConfirmHeld);
+    FArcadeInputTestAccess::Cancel(Input, 0);
+    TestTrue(TEXT("Focus/disconnect clears cached direction"), Run0->Direction.IsNearlyZero());
+    TestFalse(TEXT("Focus/disconnect clears charge"), Run0->bConfirmHeld);
+    TestEqual(TEXT("Input interruption is not game cancellation"), Run0->State, EArcadeMinigameState::Running);
+    auto* Run1 = Prepare(1, Entry1);
+    TestTrue(TEXT("Second independent run starts"), Run1 && Run1->Start());
+    TestTrue(TEXT("Distinct run identity"), Run1 && Run1->SessionId != Run0->SessionId);
+    auto* Temporary = World->SpawnActor<AActor>();
+    TestTrue(TEXT("Register owned runtime actor"), Run0->RegisterSpawnedActor(Temporary));
+    TestFalse(TEXT("Other run cannot own same actor"), Run1->RegisterSpawnedActor(Temporary));
+    TestFalse(TEXT("Never register board for destruction"), Run0->RegisterSpawnedActor(Board0));
+    TestTrue(TEXT("Complete run"), Run0->Finish(42));
+    TestEqual(TEXT("Result score"), Run0->Result.Score, 42.0);
+    TestEqual(TEXT("Result seat"), Run0->Result.Seat, 0);
+    TestEqual(TEXT("Result completed"), Run0->Result.Outcome, EArcadeMinigameOutcome::Completed);
+    TestTrue(TEXT("Runtime actor cleaned"), !IsValid(Temporary) || Temporary->IsActorBeingDestroyed());
+    TestTrue(TEXT("Restore original board receiver"), Input->GetInputReceiver(0) == Board0);
+    TestEqual(TEXT("Other run remains running"), Run1->State, EArcadeMinigameState::Running);
+    TestFalse(TEXT("Duplicate submission rejected"), Run0->Finish(999));
+    FArcadeInputTestAccess::Process(Input, 0);
+    TestTrue(TEXT("Held return input is gated"), Board0->GetMoveDirection().IsNearlyZero());
+    Input->HandleKey(EKeys::W, false);
+    Input->HandleKey(EKeys::SpaceBar, false);
+    FArcadeInputTestAccess::Process(Input, 0);
+    Input->HandleKey(EKeys::W, true);
+    FArcadeInputTestAccess::Process(Input, 0);
+    TestEqual(TEXT("Fresh board movement resumes"), Board0->GetMoveDirection(), FVector2D(0, 1));
+    auto* NewRun0 = Prepare(0, Entry0);
+    TestTrue(TEXT("Entry can be reused"), NewRun0 && NewRun0->Start());
+    TestFalse(TEXT("Old async callback cannot cancel reused entry"), Run0->Cancel());
+    TestTrue(TEXT("New run still current"), Manager->GetSession(0) == NewRun0);
+    // Another receiver now owns the seat (e.g. a menu). Ending must not steal it.
+    Input->SetInputReceiver(0, Board0);
+    TestTrue(TEXT("Cancel after another owner took input"), NewRun0->Cancel());
+    TestTrue(TEXT("Newer receiver retained"), Input->GetInputReceiver(0) == Board0);
+    Entry1->Destroy();
+    TestEqual(TEXT("Destroyed entry cancels run"), Run1->State, EArcadeMinigameState::Ended);
+    TestEqual(TEXT("Destroyed reason recorded"), Run1->Result.Reason, EArcadeMinigameEndReason::EntryDestroyed);
+    TestTrue(TEXT("Destroyed entry returns input"), Input->GetInputReceiver(1) == Board1);
+
+    auto* Preparing = Prepare(0, Entry0);
+    TestTrue(TEXT("Cancel before running"), Preparing && Preparing->Cancel());
+    TestEqual(TEXT("No preparation time counted"), Preparing->Result.ElapsedSeconds, 0.0);
+    auto* ShutdownRun = Prepare(0, Entry0);
+    World->EndPlay(EEndPlayReason::Quit);
+    TestEqual(TEXT("World teardown ends run"), ShutdownRun->State, EArcadeMinigameState::Ended);
+    TestNull(TEXT("World teardown does not restore old actor"), Input->GetInputReceiver(0));
+    TestNull(TEXT("Shutdown refuses new sessions"), Prepare(0, Entry0));
+    GEngine->DestroyWorldContext(World);
+    World->DestroyWorld(false);
+    return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FArcadeMapAuditTest, "Arcade.Board.MapAudit", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FArcadeMapAuditTest::RunTest(const FString&)
+{
+    for (const TCHAR* Path : {TEXT("/Game/Jiashu/Levels/L_Main"), TEXT("/Game/Jiashu/Levels/L_TestingLevel")})
+    {
+        UPackage* Package = LoadPackage(nullptr, Path, LOAD_None);
+        UWorld* World = Package ? UWorld::FindWorldInPackage(Package) : nullptr;
+        if (!TestNotNull(Path, World)) continue;
+        AddInfo(FString::Printf(TEXT("%s GameModeOverride=%s"), Path, *GetPathNameSafe(World->GetWorldSettings()->DefaultGameMode)));
+        for (const auto& Actor : World->PersistentLevel->Actors)
+            if (Actor) AddInfo(FString::Printf(TEXT("  %s (%s)"), *Actor->GetName(), *Actor->GetClass()->GetName()));
+    }
     return true;
 }
 #endif

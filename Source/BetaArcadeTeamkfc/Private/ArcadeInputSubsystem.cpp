@@ -204,6 +204,9 @@ bool UArcadeInputSubsystem::AssignSeat(int32 Seat, EArcadeInputSource Source)
 
 void UArcadeInputSubsystem::AutoAssignSeats()
 {
+    // Explicit rescan for newly attached Sony pads; avoids per-second EnumDevices hitches.
+    if (!SonyInput) SonyInput = MakeShared<FArcadeSonyInput>();
+    SonyInput->RequestDeviceScan();
     PollSources();
     for (int32 I = 0; I < 2; ++I) { CancelSeat(I); Seats[I] = FArcadeInputState(); }
     const auto Sources = GetAvailableSources();
