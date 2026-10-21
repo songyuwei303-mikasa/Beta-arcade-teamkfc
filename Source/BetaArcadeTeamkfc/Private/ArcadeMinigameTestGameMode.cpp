@@ -3,6 +3,7 @@
 #include "ArcadeBoardGameMode.h"
 #include "Blueprint/UserWidget.h"
 #include "Camera/CameraActor.h"
+#include "Camera/CameraComponent.h"
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
 #include "EngineUtils.h"
@@ -21,13 +22,12 @@ bool AArcadeMinigameTestGameMode::FindTestActors(AArcadeMinigameEntry*& OutEntry
 {
     OutEntry = nullptr;
     OutCamera = nullptr;
-    int32 EntryCount = 0, CameraCount = 0;
+    int32 EntryCount = 0;
     for (TActorIterator<AArcadeMinigameEntry> It(GetWorld()); It; ++It)
         if (It->GetLevel() == GetWorld()->PersistentLevel) { OutEntry = *It; ++EntryCount; }
-    for (TActorIterator<ACameraActor> It(GetWorld()); It; ++It)
-        if (It->GetLevel() == GetWorld()->PersistentLevel && It->ActorHasTag(TEXT("ArcadeMinigameCamera")))
-        { OutCamera = *It; ++CameraCount; }
-    return EntryCount == 1 && CameraCount == 1;
+    auto* Camera = EntryCount == 1 ? OutEntry->GetMinigameCamera() : nullptr;
+    OutCamera = Camera ? Cast<ACameraActor>(Camera->GetOwner()) : nullptr;
+    return Camera != nullptr;
 }
 
 void AArcadeMinigameTestGameMode::StartPlay()
@@ -35,17 +35,18 @@ void AArcadeMinigameTestGameMode::StartPlay()
     Super::StartPlay(); // All placed actors must finish BeginPlay before OnPrepare.
     if (TestSession) return;
     AArcadeMinigameEntry* Entry = nullptr;
-    ACameraActor* Camera = nullptr;
-    if (!FindTestActors(Entry, Camera))
+    int32 EntryCount = 0;
+    for (TActorIterator<AArcadeMinigameEntry> It(GetWorld()); It; ++It)
+        if (It->GetLevel() == GetWorld()->PersistentLevel) { Entry = *It; ++EntryCount; }
+    if (EntryCount != 1)
     {
-        UE_LOG(LogArcadeMinigameTest, Error, TEXT("Test map needs exactly one MinigameEntry and one CameraActor tagged ArcadeMinigameCamera in its persistent level."));
+        UE_LOG(LogArcadeMinigameTest, Error, TEXT("Test map needs exactly one MinigameEntry in its persistent level."));
         return;
     }
     auto* GI = GetGameInstance();
     auto* PC = GI ? GI->GetFirstLocalPlayerController() : nullptr;
     auto* Sessions = GetWorld()->GetSubsystem<UArcadeMinigameSubsystem>();
     if (!PC || !Sessions) return;
-    PC->SetViewTarget(Camera); // Test host only. Streamed minigames never run this GameMode.
     TestEntry = Entry;
     TestSession = Sessions->PrepareSession(TestSeat, Entry);
     if (!TestSession)
@@ -54,18 +55,6 @@ void AArcadeMinigameTestGameMode::StartPlay()
         return;
     }
     if (TestSession->State == EArcadeMinigameState::Ended) return;
-    if (Entry->MinigameWidgetClass)
-    {
-        TestWidget = CreateWidget<UUserWidget>(PC, Entry->MinigameWidgetClass);
-        if (!TestWidget)
-        {
-            TestSession->Cancel();
-            UE_LOG(LogArcadeMinigameTest, Error, TEXT("Could not create test UI."));
-            return;
-        }
-        Entry->SetPresentationWidget(TestWidget);
-        TestWidget->AddToViewport();
-    }
     PreparedAt = GetWorld()->GetTimeSeconds();
     SetActorTickEnabled(true);
     TryStartPreparedSession();
@@ -74,8 +63,54 @@ void AArcadeMinigameTestGameMode::StartPlay()
 void AArcadeMinigameTestGameMode::TryStartPreparedSession()
 {
     if (!TestSession) { SetActorTickEnabled(false); return; }
+    if (TestSession->State == EArcadeMinigameState::Ended)
+    {
+        if (IsValid(Presentation))
+        {
+            if (bKeepResultVisible) Presentation->Freeze();
+            else
+            {
+                Presentation->BeginClose(TestSession->Result);
+                if (!Presentation->IsClosed()) return;
+                Presentation->Destroy();
+                Presentation = nullptr;
+            }
+        }
+        SetActorTickEnabled(false);
+        return;
+    }
+    if (Presentation && (!IsValid(Presentation) || Presentation->HasFailed()))
+    {
+        TestSession->Cancel();
+        UE_LOG(LogArcadeMinigameTest, Error, TEXT("Presentation lost its instance camera."));
+        return;
+    }
     if (TestSession->State == EArcadeMinigameState::Ready)
     {
+        if (bEnablePresentation)
+        {
+            if (!Presentation)
+            {
+                Presentation = GetWorld()->SpawnActor<AArcadeMinigamePresentation>();
+                if (!Presentation || !Presentation->Initialize(TestEntry, TestSeat, PresentationSettings, true))
+                {
+                    TestSession->Cancel();
+                    if (IsValid(Presentation)) Presentation->Destroy();
+                    Presentation = nullptr;
+                    UE_LOG(LogArcadeMinigameTest, Error, TEXT("Presentation setup failed. Check camera, frame widget names and resolution aspect ratio."));
+                    return;
+                }
+            }
+            if (!Presentation->IsReady())
+            {
+                if (GetWorld()->GetTimeSeconds() - PreparedAt >= PreparationTimeout)
+                {
+                    TestSession->Cancel();
+                    UE_LOG(LogArcadeMinigameTest, Error, TEXT("Opening timed out; frame must call FinishOpening."));
+                }
+                return;
+            }
+        }
         if (!TestSession->Start())
         {
             TestSession->Cancel();
@@ -88,7 +123,6 @@ void AArcadeMinigameTestGameMode::TryStartPreparedSession()
         TestSession->Cancel();
         UE_LOG(LogArcadeMinigameTest, Error, TEXT("Preparation timed out. OnPrepare must call Run.MarkReady after initialization."));
     }
-    if (TestSession->State != EArcadeMinigameState::Preparing) SetActorTickEnabled(false);
 }
 
 void AArcadeMinigameTestGameMode::Tick(float DeltaSeconds)
@@ -100,7 +134,7 @@ void AArcadeMinigameTestGameMode::Tick(float DeltaSeconds)
 void AArcadeMinigameTestGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
     if (TestSession) TestSession->Cancel();
-    if (TestWidget) TestWidget->RemoveFromParent();
-    if (IsValid(TestEntry) && TestEntry->GetMinigameWidget() == TestWidget) TestEntry->SetPresentationWidget(nullptr);
+    if (IsValid(Presentation)) Presentation->Destroy();
+    Presentation = nullptr;
     Super::EndPlay(EndPlayReason);
 }

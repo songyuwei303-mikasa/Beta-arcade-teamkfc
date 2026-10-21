@@ -1,4 +1,5 @@
 #include "ArcadeBoardGameMode.h"
+#include "ArcadeBoardRound.h"
 #include "ArcadeBoardCharacter.h"
 #include "ArcadeInputSubsystem.h"
 #include "Camera/CameraActor.h"
@@ -95,6 +96,9 @@ void AArcadeBoardGameMode::StartPlay()
         }
         Character->InitializeSeat(Seat, Camera->GetCameraComponent()->GetComponentRotation().Yaw);
     }
+    for (int32 Seat = 0; Seat < 2; ++Seat) SpawnTransforms.Add(SeatCharacters[Seat]->GetActorTransform());
+    for (TActorIterator<AArcadeBoardRound> It(GetWorld()); It; ++It)
+        bBoardInputEnabled = It->FlowState == EArcadeFlowState::Playing;
     for (int32 Seat = 0; Seat < 2; ++Seat) RestoreBoardInput(Seat);
 }
 
@@ -108,7 +112,7 @@ bool AArcadeBoardGameMode::RestoreBoardInput(int32 Seat)
     auto* Character = GetSeatCharacter(Seat);
     auto* GI = GetGameInstance();
     auto* Input = GI ? GI->GetSubsystem<UArcadeInputSubsystem>() : nullptr;
-    return Character && Input && Input->SetInputReceiver(Seat, Character);
+    return Character && Input && Input->SetInputReceiver(Seat, bBoardInputEnabled ? Character : nullptr);
 }
 
 void AArcadeBoardGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -118,4 +122,34 @@ void AArcadeBoardGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
             for (int32 Seat = 0; Seat < SeatCharacters.Num(); ++Seat)
                 if (SeatCharacters[Seat] && Input->GetInputReceiver(Seat) == SeatCharacters[Seat]) Input->SetInputReceiver(Seat, nullptr);
     Super::EndPlay(EndPlayReason);
+}
+
+void AArcadeBoardGameMode::SetBoardInputEnabled(bool bEnabled)
+{
+    bBoardInputEnabled = bEnabled;
+    auto* GI = GetGameInstance();
+    auto* Input = GI ? GI->GetSubsystem<UArcadeInputSubsystem>() : nullptr;
+    if (!Input) return;
+    for (int32 Seat = 0; Seat < 2; ++Seat)
+    {
+        auto* Character = GetSeatCharacter(Seat);
+        if (!Character) continue;
+        if (bEnabled) RestoreBoardInput(Seat);
+        else
+        {
+            IArcadeInputReceiver::Execute_ArcadeInputCancelled(Character, Seat);
+            if (Input->GetInputReceiver(Seat) == Character) Input->SetInputReceiver(Seat, nullptr);
+        }
+    }
+}
+bool AArcadeBoardGameMode::ResetBoardCharacters()
+{
+    if (!AreBoardCharactersReady() || SpawnTransforms.Num() != 2) return false;
+    for (int32 Seat = 0; Seat < 2; ++Seat)
+    {
+        auto* Character = GetSeatCharacter(Seat);
+        IArcadeInputReceiver::Execute_ArcadeInputCancelled(Character, Seat);
+        Character->SetActorTransform(SpawnTransforms[Seat], false, nullptr, ETeleportType::TeleportPhysics);
+    }
+    return true;
 }

@@ -1,8 +1,12 @@
 # Beta Arcade：项目开发约定与交接
 
-**最新进展（2026-10-20，C 接入）：** `ArcadeMinigameTestGameMode` 已加入，独立地图可以自动准备／开始同一会话，并由测试环境创建入口配置的 UI。完整构建和七项自动化通过；B 的蓝图/UI 人工联调待用户完成，详见 [FirstMinigameTutorial.md](FirstMinigameTutorial.md)。当前剩余公共阶段为 D/E，不能把普通视口 UI 当成已验证的画中画。用户已明确：小游戏中途不可主动退出，玩法忽略 Exit；菜单可用 Exit 返回上级。Cancel 保留给异常清理，不作为玩法退出按钮。
+**当前进展（2026-10-21，以此段为准）：** 已追加菜单→对局→清理→结算流程与 Row/Column 三连胜利，见 [MatchFlow.md](MatchFlow.md)。BeginPlay 只搭建基础设施，UI 显式调用 StartNewRound；赢家锁定后系统停止其余挑战，等待卸载后允许再来一局/返回菜单。L_Main 九个用户蓝图格子的坐标已补齐，保留变色蓝图。当前还没有实际菜单 UI。下方 F/G 初版描述中“未做总胜负／自动开始对局”已被本段替代。
 
-更新日期：2026-10-20。最初整理时的代码基线：`6953205 InputSystem`；双席位输入与移动已由用户阶段验收。Sony DirectInput 按需 `EnumDevices` 保持不变（禁止恢复每秒枚举）。**阶段 A 与 C 独立测试壳已实现，完整构建与七项自动化通过；下一步由用户制作 B 并做蓝图/UI 联调**。节点与职责见 [MinigameSession.md](MinigameSession.md)，顺序见 §7.0；后续动态加载、画中画、归属尚未实现。
+**F/G 初版记录：** F/G 格子交互、单局池分配与独立纪录已接入 L_Main，见 [BoardCells.md](BoardCells.md)。九格和默认池已建立，两个宿主 Start Automatically 已关闭。用户已确认：仅成功完成可占格、平分保留原主、同格按完成顺序比较严格更优成绩。UE 完整构建、12 项编辑器测试和 1 项真实地图离屏运行测试通过；人工试玩与美术动画待验收。对局总胜负、疲劳伪随机和正式 UI 尚未实现。下文 A–E 历史记录保留，F/G 接口以 BoardCells.md 为准。
+
+**A–E 阶段记录（2026-10-20）：** A–E 公共小游戏链路已在源码中接通。用户已人工验收双人移动、B/C 独立样例，以及 L_Main 上的 D 双实例。E（`ArcadeMinigamePresentation` / `ArcadeMinigameView`）已有完整构建、9 项编辑器回归和 2 项真实渲染测试；自定义外框/动画与硬件游玩仍待用户验收。小游戏中途不能主动退出，Exit 不接 Cancel。**当时下一公共阶段是 F：棋盘格子触发开局（现已实现）**（关掉宿主的 Start Automatically，改为走到格子后确认）。尚未实现：格子交互与归属、对局胜负、正式选设备/断连 UI、3D 模型边框。专项文档： [MinigameSession.md](MinigameSession.md)、[DynamicMinigameInstances.md](DynamicMinigameInstances.md)、[MinigamePresentation.md](MinigamePresentation.md)。Sony DirectInput 仍禁止每秒 `EnumDevices`。
+
+历史验证记录（不要当成“尚未开始”）：C 测试 GameMode 与七项自动化；D 八项自动化（`Saved/Automation/DynamicInstances`）；E 渲染测试见 MinigamePresentation.md。下文若与本段冲突，以本段为准。
 
 本文件供新对话、主程序和小游戏制作者交接使用。**必须区分“已实现”与“设计方向／待实现”；后文拟议接口不能被当作引擎里已经存在的节点。** 本文记录已有讨论，不代表现在授权实现所有后续功能。新任务仍以用户当次请求为范围。
 
@@ -10,7 +14,7 @@
 
 1. 阅读本文，再阅读 [InputSystem.md](InputSystem.md)。后者是现有输入系统的具体接入说明。棋盘移动见 [BoardMovement.md](BoardMovement.md)。
 2. 检查当前工作区、工程配置和源码。本文是交接快照；发现与代码不符时，明确指出差异，不要凭文档覆盖已有修改。
-3. 双席位连续移动已阶段完成（复用现有输入，无第二 LocalPlayer／Possess）。小游戏阶段 A 已加入；下一步由用户做极简入口蓝图，公共层补薄测试 GameMode，复用同一会话；不要另造一套生命周期。
+3. 双席位连续移动已阶段完成（复用现有输入，无第二 LocalPlayer／Possess）。小游戏 A–E 已接入同一套会话生命周期；不要另造一套。F/G 已实现，接入说明见 BoardCells.md；不要回头重做测试 GameMode 或画中画。
 4. 正式玩法不能继承测试 Controller 的自动创建测试面板行为，否则面板会把两名玩家的输入接收对象重新绑定到自己。
 5. 保留输入测试入口，确保新玩法开发后仍有独立的设备回归测试方式。运行中改 Seat／设备匹配的正式 UI 留到后续 UI 阶段。
 
@@ -20,7 +24,7 @@
 
 玩家在九宫格地图上移动，在所在格子按确认进入该格子的小游戏。小游戏是单人游戏，但两位玩家的挑战可以同时进行。结束后依据成绩决定格子归属；另一位玩家可以挑战同一格，按该小游戏规则比较高分或短耗时。
 
-以下规则尚不能擅自补全：平局、失败／退出是否保留旧纪录、对局总体胜利条件、双方同时结算同一格的处理细节。用户已确认类似胡闹厨房的自由连续移动与固定共享镜头。
+本轮已确认平局／失败保留旧纪录、同格按完成顺序严格比较。对局总体胜利条件仍不能擅自补全。用户已确认类似胡闹厨房的自由连续移动与固定共享镜头。
 
 团队由用户担任主程序及部分设计，另两名设计专业组员可以用蓝图制作小游戏。分工方向：
 
@@ -56,12 +60,15 @@
 - `UArcadeMenuWidget`：显式按钮列表的双席位导航；鼠标和确认键执行相同的按钮 OnClicked。
 - `AArcadeInputDemoGameMode`、`AArcadeInputDemoController`、`UArcadeInputDemoWidget`：临时输入工作台，不是正式游戏框架。
 - `AArcadeBoardGameMode`、`AArcadeBoardController`、`AArcadeBoardCharacter`：正式双席位连续移动基础版；一个共享视角、按 Seat0/Seat1 PlayerStart 生成角色，无第二个 LocalPlayer 或 Possess，Controller 不创建测试 UI。地图与角色美术／AnimBP／移动调参见 BoardMovement.md；占位 Cube 可被蓝图隐藏，使用 Character 自带 Mesh。
-- `AArcadeMinigameEntry`、`UArcadeMinigameSession`、`UArcadeMinigameSubsystem`：阶段 A。World 范围内两席独立会话；Run 实现 ArcadeInputReceiver 并向入口蓝图转发，准备／就绪／运行／结束分离，结果通知和输入恢复；不加载关卡或改变镜头。
-- `ArcadeInputTests.cpp`：三个输入基础测试、角色移动/路由生命周期测试、地图只读核对，以及小游戏会话生命周期测试，共六项。
+- `AArcadeMinigameEntry`、`UArcadeMinigameSession`、`UArcadeMinigameSubsystem`：阶段 A。两席会话、输入交接、结果通知；不改格子归属。
+- `AArcadeMinigameTestGameMode`：阶段 C。独立地图调用同一会话，并走 E 的全屏画中画。
+- `AArcadeMinigameInstanceHost`：阶段 D。同图双实例加载、卸载和输入恢复。
+- `AArcadeMinigamePresentation`、`UArcadeMinigameView`：阶段 E。每实例 SceneCapture、Render Target 与嵌套 UI，不切换棋盘主相机。
+- 自动化在 `ArcadeInputTests.cpp` 与 `ArcadePresentationTests.cpp`。通过项数以专项文档为准，早期“六项”不是最新全集。
 
 ### 尚未实现
 
-极简蓝图示例小游戏（B）、动态关卡实例加载（D）、画中画（E）、格子交互／归属、对局胜负、正式输入选择与断连 UI、成绩比较业务规则。阶段 A/C 已构建／自动化验收，仍需 B 做实际蓝图/UI 联调。
+对局胜负、正式选设备／断连 UI（H）、最终外框美术和 3D 模型边框。成绩比较已实现，见 BoardCells.md。E 的自定义外框仍待用户看一眼。
 
 早期曾讨论 Enhanced Input，但**当前实现没有创建 IA/IMC 资源，实际是 Slate 键盘预处理 + XInput + Sony DirectInput**。不要把设想误写成现状。若以后换设备后端，保持玩法侧接口和已确认的行为。
 
@@ -145,34 +152,34 @@ Windows XInput + 原生 Sony DirectInput 已实现。Sony 当前识别 DualShock
 
 首个验收目标：同一游戏窗口中，两位玩家独立移动；一人操作菜单时不控制另一人；取消／失焦不会留下持续移动；鼠标只操作 UI。
 
-## 7. 公共小游戏方案：阶段 A 已实现，后续阶段待做
+## 7. 公共小游戏方案：A–E 已实现，下一阶段是格子入口
 
 ### 7.0 下一阶段实施顺序（先做“门”，再做“屋子”）
 
-用户已确认：双席位移动阶段完成；运行中改设备／Seat 匹配留到正式 UI。小游戏相关系统互相依赖，**禁止**一上来做完整小游戏 GameMode、画中画或格子归属。正式流程中子关卡**不会**启动自己的 GameMode；测试 GameMode 只是调用同一套生命周期的薄壳。
+用户已确认：双席位移动阶段完成；运行中改设备／Seat 匹配留到正式 UI。正式流程中子关卡**不会**启动自己的 GameMode；测试 GameMode 只是调用同一套生命周期的薄壳。
 
-| 阶段 | 内容 | 验收要点 | 本阶段不做 |
-| --- | --- | --- | --- |
-| **A（已实现，待蓝图联调）** | C++：入口基类 + 双席会话 + 输入交接。实际节点和清理职责见 MinigameSession.md。结果仅通知，不决定归属。 | 构建、自动化已通过；手动在现有场景用测试按钮启动，验证入口事件与输入返回。 | 画中画、关卡实例、格子归属、选设备 UI、复杂示例玩法 |
-| **B** | 极简蓝图示例小游戏（独立小地图 + 入口子类；例如按住确认计时或走到目标）。只用现有 `ArcadeInputReceiver`。 | 一人完整打完并提交结果。 | 精美术、双套玩法代码 |
-| **C（源码已加入，待 B 联调）** | 小游戏**测试** GameMode：打开小游戏地图 Play 时创建测试会话、绑输入、调用与正式相同的入口生命周期；画面可先全屏／简单显示。 | 设计侧不进棋盘也能单独调小游戏。 | 与正式两套生命周期 |
-| **D** | 动态关卡实例加载／卸载、偏移、本实例内找入口；同图双实例。 | 两人同时各跑一份，不串引用、不串输入。 | 未定案的比分业务硬编码 |
-| **E** | SceneCapture → 每会话 RT → UMG 容器；独立测试与正式同一拍摄路径。 | 主屏保持棋盘共享相机；小游戏不抢主 View Target。 | — |
-| **F → G → H** | 棋盘格子开门 → 成绩／归属（规则先与用户确认）→ 正式 UI（含 Seat／设备）。 | 从棋盘进入再返回；归属符合已确认规则。 | 断连全局暂停等未定案方案 |
+| 阶段 | 状态 | 内容 |
+| --- | --- | --- |
+| **A** | 已实现并验收链路 | 入口基类 + 双席会话 + 输入交接。结果只通知，不决定归属。见 MinigameSession.md。 |
+| **B** | 用户已做样例 | 独立小地图“走到终点并确认”。见 FirstMinigameTutorial.md。 |
+| **C** | 已实现，用户已用它测 B | `ArcadeMinigameTestGameMode`，现已走 E 的全屏拍摄，不再是裸视口 UI。 |
+| **D** | 已实现，用户已在 L_Main 验收 | `ArcadeMinigameInstanceHost` 同图双实例。见 DynamicMinigameInstances.md。 |
+| **E** | 源码与自动化已完成；自定义外框待看 | SceneCapture → 每实例 RT → UMG。主屏保持棋盘相机。见 MinigamePresentation.md。 |
+| **F** | 已实现，见 BoardCells.md | 棋盘格子：走到格子、确认后对该席 `Start Minigame`。关掉集成用的 Start Automatically。 |
+| **G** | 已实现，规则见文首 | 收结果、严格比较成绩、更新格子归属。平局／失败保留纪录，同格按完成顺序结算。 |
+| **H** | 未做 | 正式 UI：选设备／Seat、菜单、断连提示。断连是否整局暂停仍未定案。 |
 
-实施评估：顺序总体合理，但 B 与 C 应紧密联调，避免示例长期依赖临时启动逻辑。当前依赖：输入 ✅ → 棋盘移动 ✅ → **A 源码／自动化 ✅** → **B 极简蓝图＋C 测试壳联调** → D 同图双实例 → E 统一拍摄 → F／G／H。
+依赖：输入 ✅ → 移动 ✅ → A ✅ → B/C ✅ → D ✅ → E 源码 ✅ → **F 格子开门** → G 归属 → H UI。组员现在可以按现有样例做新小游戏；正式对局循环还要等 F（以及规则定下来之后的 G）。
 
-用户现在即可制作独立普通小地图的极简入口蓝图，使用已加入的 C 测试 GameMode 直接 Play；组员可在 B/C 人工联调通过后开始玩法原型。稳定团队模板还须 D 和 E 两个公共阶段验证，再分发经过双实例／画中画验证的样例。不必等待格子归属、完整菜单或最终美术才开始小游戏玩法。
+**后续代理继续遵守：**
 
-**阶段 A 的范围约束（已落实；后续代理继续遵守公共边界）：**
-
-1. 先读本文 §4、§5、§7.0–7.4 与 InputSystem.md、BoardMovement.md「将某一席位暂交给菜单」。
-2. 阶段 A/C 已按用户任务推进；下一步先完成 B 人工联调，不自动连做 D–H。
-3. 复用 `UArcadeInputSubsystem`／`IArcadeInputReceiver`／`AArcadeBoardGameMode::RestoreBoardInput`／`GetSeatCharacter`；不引入第二 LocalPlayer、不默认 Possess 双角色、不改回每秒 `EnumDevices`。
-4. 当前由 Run 实现 `ArcadeInputReceiver`，再转发入口事件；入口蓝图通过本实例引用控制操作对象。棋盘角色保留，不默认 Possess，不让具体玩法管理物理设备。
-5. 类名／节点名选定后写入专项文档（建议新建 `MinigameSession.md`），并更新本文「已实现／尚未实现」；拟议旧名在落地前不可当作已存在。
-6. 修改公共 C++ 后完整编译（关编辑器或 `Build.bat`），跑受影响的 `Arcade.` 自动化，并说明哪些仅编译通过、哪些需人工试玩。
-7. 平局、失败是否占格、断连是否整局暂停等**业务规则未定案**，阶段 A 只提交结果给公共回调／日志，不写死棋盘归属。
+1. 先读本文文首、§4、§5、§7.0 与对应专项文档。发现正文旧句写着“E 未实现／下一步做 B”时，以文首为准并改掉该句。
+2. 未获当次授权不要跳去做 G 的胜负规则或 H 的选设备 UI。
+3. 复用现有 Subsystem／Receiver／`RestoreBoardInput`；不引入第二 LocalPlayer，不默认双 Possess，不改回每秒 `EnumDevices`。
+4. 由 Session 接收输入再转发给入口；小游戏作者不自己 `SetInputReceiver`，不 `AddToViewport`，不 `SetViewTarget`。
+5. 新节点写入专项文档，并更新文首与「已实现／尚未实现」。
+6. 改公共 C++ 后完整编译并跑受影响的 `Arcade.` 测试；写明哪些是自动化、哪些还要人工试玩。
+7. 本轮已确认平局保留原主、失败不占格；归属实现见 BoardCells.md。断连是否整局暂停仍未定案。
 
 ### 7.1 独立地图制作，动态实例化运行
 
@@ -186,7 +193,7 @@ Windows XInput + 原生 Sony DirectInput 已实现。Sony 当前识别 DualShock
 
 ### 7.2 GameMode 分工
 
-计划提供正式游戏 GameMode 与公共小游戏测试 GameMode。后者用于直接打开小游戏地图按 Play 时创建测试上下文、接入输入和展示界面。
+正式棋盘使用 `ArcadeBoardGameMode`（或其蓝图子类）。独立小地图使用已实现的 `ArcadeMinigameTestGameMode`。
 
 小游戏地图作为子关卡流入正式游戏时，不会启动自己的 GameMode，也不会接管主世界。具体计分、目标和局部规则放在小游戏入口蓝图中，不放在小游戏自定义 GameMode 里。
 
@@ -194,13 +201,13 @@ Windows XInput + 原生 Sony DirectInput 已实现。Sony 当前识别 DualShock
 
 ### 7.3 小游戏入口与生命周期
 
-已提供 `AArcadeMinigameEntry` C++ 基类，组员创建蓝图子类作为地图中的唯一入口。阶段 A 中操作对象由入口蓝图自行通过实例引用管理；公共相机／UI 配置留到后续阶段。
+已提供 `AArcadeMinigameEntry` C++ 基类，组员创建蓝图子类作为地图中的唯一入口。操作对象由入口蓝图用本实例引用管理。相机与 UI 容器见 MinigamePresentation.md。
 
-已实现生命周期：PrepareSession → OnPrepare → MarkReady → Start／OnStarted → Running → Finish 或 Cancel → OnStopped／OnCleanup → Ended。阶段 A 的蓝图节点以 MinigameSession.md 为准；**Pause、Resume、Finish Minigame 等旧拟议名称不是现有节点**。
+已实现生命周期：PrepareSession → OnPrepare → MarkReady →（E：等外框打开）→ Start／OnStarted → Running → Finish 或 Cancel → OnStopped／OnCleanup → Ended。蓝图节点以 MinigameSession.md 为准；**Pause、Resume、Finish Minigame 等旧拟议名称不是现有节点**。
 
-准备阶段完成所需初始化，再显式 Start；阶段 D/E 将接入加载和显示准备。本阶段 Start 开始计时并要求输入再次回到中立，不自动等待硬件中立才计时。每次挑战使用独立 Run 和 SessionId，结束后拒绝重复／迟到提交；加载失败尚待 D 实现。
+准备完成后才 Start；Start 开始计时，并要求输入再次回到中立。每次挑战使用独立 Run 和 SessionId，结束后拒绝重复／迟到提交。加载失败由宿主 `OnLoadFailed` 报告，不伪造一条成绩。
 
-小游戏只提交完成状态、分数、耗时等必要结果；公共系统统一比较成绩并更新棋盘。小游戏不直接占领格子，也不查询另一位玩家的小游戏。平局、失败、取消和同时结束的业务规则先确认再实现。
+小游戏只提交完成状态、分数、耗时等必要结果；公共系统统一比较成绩并更新棋盘。小游戏不直接占领格子，也不查询另一位玩家的小游戏。平局、失败、取消和同时结束的规则已由本轮确认并实现，见 BoardCells.md。
 
 ### 7.4 角色与输入
 
@@ -210,15 +217,11 @@ Windows XInput + 原生 Sony DirectInput 已实现。Sony 当前识别 DualShock
 
 ### 7.5 画中画与镜头
 
-计划用公共相机模板承接组员配置的位置、旋转、FOV 和跟随行为；通过 SceneCapture2D → 每会话独立 Render Target → 对应 UMG 容器展示。Render Target 只负责画面，输入继续由席位路由投递。
+已实现：Entry 的 CameraComponent（CameraActor 或角色内相机）→ 每实例 SceneCapture2D → 独立 Render Target → `ArcadeMinigameView`。输入仍走席位路由。拍摄参数与限制见 MinigamePresentation.md。
 
-组员指定／切换小游戏相机，不调用 Set View Target 去接管共享主屏幕。CameraComponent 的设置不会自动全部同步给 Scene Capture；框架要明确支持和同步的参数。
+不要 `SetViewTarget` 接管棋盘主屏。默认设计比例 16:9（1920×1080 设计 / 1280×720 渲染）；窗口比例不同时默认留黑边，不拉伸。最终窗口布局未冻结。
 
-独立测试也使用相同的拍摄与 UI 路径，只放大容器展示，避免测试时普通相机正常而正式画中画曝光／效果不同。16:9 曾作为固定画面比例的建议，**尚未最终确定**；确认比例后保持构图，不随意拉伸。
-
-小游戏 UI 由框架加入对应玩家容器，不自行 Add to Viewport 覆盖整个屏幕。组员可制作自己的 Widget Blueprint，公共框架提供时间、结果等共通显示能力。
-
-两个小游戏加棋盘会增加渲染负担，需要测量分辨率、更新频率和目标帧率；目前没有已经验证的性能保证。
+小游戏 UI 由框架放进外框，不要自己 `AddToViewport`。两个小游戏加棋盘的帧率还没有正式性能验收。
 
 ### 7.6 同一 World 的隔离与清理约定
 
@@ -266,7 +269,7 @@ Windows XInput + 原生 Sony DirectInput 已实现。Sony 当前识别 DualShock
 
 历史测试报告在 `Saved/Automation/Input`，日志在 `Saved/Logs/InputAutomation.log`。实际设备识别日志在 `Saved/Logs/InputSonySmoke.log`，截图在 `Saved/Screenshots/WindowsEditor/ScreenShot00002.png`。Saved 可能被清理或不进入 Git，缺失不等于测试从未执行，也不等于当前版本已通过；代码修改后应重新产生相应证据。
 
-用户已确认输入初版、PS4 蓝牙输入和双人移动阶段测试通过，不扩大为所有硬件均已验证。10-19 移动接入的五项自动化报告见 `Saved/Automation/Board`。10-20 阶段 A 完整构建通过，`Arcade.` 六项全部 Success、零测试警告；报告见 `Saved/Automation/Minigame`，日志见 `Saved/Logs/MinigameAutomation.log`。新增会话测试覆盖输入交接、两席隔离、中立保护、重复／迟到回调、入口销毁、资源清理与 World 退出。小游戏蓝图联调及显示路径仍待 B/C/D/E 验收。
+用户已确认输入初版、PS4 蓝牙输入和双人移动阶段测试通过，不扩大为所有硬件均已验证。10-19 移动接入的五项自动化报告见 `Saved/Automation/Board`。10-20 阶段 A 完整构建通过，`Arcade.` 六项全部 Success、零测试警告；报告见 `Saved/Automation/Minigame`，日志见 `Saved/Logs/MinigameAutomation.log`。新增会话测试覆盖输入交接、两席隔离、中立保护、重复／迟到回调、入口销毁、资源清理与 World 退出。B/C 与 L_Main 双席 D 已由用户验收。E 自定义外框和实机游玩仍待看一眼。本句之前的“六项”是阶段 A 当时的自动化记录。
 
 ### 修改公共 C++ 后
 

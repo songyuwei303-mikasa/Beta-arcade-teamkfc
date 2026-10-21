@@ -1,6 +1,10 @@
+2026-10-21 正式接入更新：F/G 已完成，L_Main 使用格子确认进入，详见 [BoardCells.md](BoardCells.md)。下面的自动启动配置仅为历史 D 集成步骤。
+
 # 公共小游戏：阶段 A 接入
 
-更新：2026-10-20。已实现入口、双席会话、生命周期、输入交接和结果通知，并加入 C 的独立测试 GameMode。没有实现动态关卡实例、画中画、格子入口、成绩比较或归属。完整首个蓝图样例教程见 [FirstMinigameTutorial.md](FirstMinigameTutorial.md)。请勿把已有会话测试理解成同地图双实例加载测试。
+E 接入更新：相机与显示路径见 [MinigamePresentation.md](MinigamePresentation.md)。Entry.MarkReady 后宿主创建显示/UI并等待外框 FinishOpening，再 Session.Start；OnPrepare 中仍不保证 UI 存在。Finish 后 Session 的 OnStopped/OnCleanup/输入恢复顺序不变，宿主保留冻结画面和 UI 播放关闭动画，之后才卸载关卡。“游戏结束”与“窗口消失”已分离。
+
+最新状态：B/C 已验收。D 见 [DynamicMinigameInstances.md](DynamicMinigameInstances.md)，E 见 [MinigamePresentation.md](MinigamePresentation.md)。下文若写“没有动态实例／没有画中画／B 待做”，那是 A 时期记录，不要当成现状。格子入口和成绩归属仍未做。样例教程见 [FirstMinigameTutorial.md](FirstMinigameTutorial.md)。
 
 ## 真实类与节点
 
@@ -66,16 +70,11 @@ On Stopped 停止玩法；On Cleanup 清除自己的 TimerHandle、事件绑定�
 
 所有 Actor BeginPlay 后，测试模式创建会话并等待 Ready，再 Start。OnPrepare 默认 30 秒未就绪会报错取消。入口可配置 MinigameWidgetClass；测试模式创建 Widget，在 OnStarted 前将其交给 Entry.GetMinigameWidget。入口只更新 UI，不自己 AddToViewport。结果画面保留到停止 Play；当前不自动重开。
 
-本版测试显示为普通主相机＋视口 Widget。E 尚未实现；将来需替换成统一拍摄和席位容器，不能把现在的 UI 视作已经验证可被 SceneCapture 自动捕获。
+测试模式现在使用与正式宿主相同的 SceneCapture／Render Target／外框，只是全屏放大。不要再把旧的“普通视口 Widget”当成当前测试画面。
 
 ## 从现在到团队开发的里程碑
 
-1. **A 完成后（现在）**：你可创建独立普通小地图、入口蓝图、一个目标／按钮玩法。先验证生命周期和结果，避免投入美术。地图暂时还没有自动测试启动器。
-2. **下一步 B＋C 联调**：公共层提供独立测试 GameMode（调用同一会话，不另写玩法），你做一个极简示例。完成后，设计侧打开自己的 Level 就能 Play；组员可开始制作玩法原型。
-3. **D 双实例加载**：同一地图加载两份，验证偏移、引用、输入、成绩与卸载隔离。通过后多人并行生产才有经过验证的实例规范。
-4. **E 统一画中画**：正式与独立测试使用同一路 SceneCapture/RT/UI；核验构图、局部 UI、灯光及性能。完成 D＋E 并验证样例后，冻结首版模板，分发给组员批量制作。
-
-当前 C 源码已完成，所以你可以直接按 FirstMinigameTutorial 做 B 并按 Play 联调。距“验证过正式双人接入的团队模板”还差 D、E 两个公共阶段及 B/C 人工验收。F 格子入口、G 成绩归属、H 正式 UI 可继续在主项目推进，不必阻塞具体小游戏玩法开发。
+A–E 的公共链路已经接通，B 样例和 D 双实例已由用户试过。组员可以按现有样例做新小游戏。下一公共阶段是 F 格子入口，然后才是 G 归属和 H 正式 UI。集成测试用的 Start Automatically 在正式格子接入后应关掉。
 
 ## 验证记录
 

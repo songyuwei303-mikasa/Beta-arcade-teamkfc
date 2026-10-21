@@ -25,7 +25,7 @@ public:
     UFUNCTION(BlueprintPure, Category="Arcade|Board") FVector2D GetMoveDirection() const { return MoveDirection; }
 
 protected:
-    /** No default game action: blueprint can consume Confirm/Exit without reading physical keys. */
+    /** Receives unconsumed board input. Confirm first attempts native cell interaction. */
     UFUNCTION(BlueprintImplementableEvent, Category="Arcade|Board")
     void OnBoardButton(int32 Seat, EArcadeInputAction Action, bool bPressed);
     UFUNCTION(BlueprintImplementableEvent, Category="Arcade|Board") void OnBoardInputCancelled(int32 Seat);

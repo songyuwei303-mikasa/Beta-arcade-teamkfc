@@ -14,6 +14,9 @@
 #include "ArcadeMinigame.h"
 #include "ArcadeMinigameTestGameMode.h"
 #include "Camera/CameraActor.h"
+#include "ArcadeMinigameInstanceHost.h"
+#include "Engine/LevelStreamingDynamic.h"
+#include "UObject/UnrealType.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
 struct FArcadeInputTestAccess
@@ -190,6 +193,7 @@ struct FArcadeMinigameTestAccess
     static void StartPrepared(AArcadeMinigameTestGameMode* Mode, UArcadeMinigameSession* Run)
     {
         Mode->TestSession = Run;
+        Mode->bEnablePresentation = false;
         Mode->TryStartPreparedSession();
     }
 };
@@ -330,6 +334,115 @@ bool FArcadeMinigameSessionTest::RunTest(const FString&)
     TestEqual(TEXT("World teardown ends run"), ShutdownRun->State, EArcadeMinigameState::Ended);
     TestNull(TEXT("World teardown does not restore old actor"), Input->GetInputReceiver(0));
     TestNull(TEXT("Shutdown refuses new sessions"), Prepare(0, Entry0));
+    GEngine->DestroyWorldContext(World);
+    World->DestroyWorld(false);
+    return true;
+}
+
+struct FArcadeInstanceTestAccess
+{
+    static bool Start(AArcadeMinigameInstanceHost* Host, UArcadeInputSubsystem* Input)
+    { Host->bEnablePresentation = false; return Host->StartWithInput(Input); }
+};
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FArcadeInstanceTest, "Arcade.Minigame.DynamicInstances", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FArcadeInstanceTest::RunTest(const FString&)
+{
+    UWorld* World = UWorld::CreateWorld(EWorldType::Game, false);
+    GEngine->CreateNewWorldContext(EWorldType::Game).SetCurrentWorld(World);
+    World->InitializeActorsForPlay(FURL());
+    World->GetWorldSettings()->NotifyBeginPlay();
+    auto* Input = NewObject<UArcadeInputSubsystem>(NewObject<UGameInstance>());
+    auto* Board0 = World->SpawnActor<AArcadeBoardCharacter>();
+    auto* Board1 = World->SpawnActor<AArcadeBoardCharacter>(FVector(0, 300, 0), FRotator::ZeroRotator);
+    Input->SetInputReceiver(0, Board0);
+    Input->SetInputReceiver(1, Board1);
+    auto* Host0 = World->SpawnActor<AArcadeMinigameInstanceHost>();
+    auto* Host1 = World->SpawnActor<AArcadeMinigameInstanceHost>();
+    Host1->Seat = 1;
+    const FSoftObjectPath Map(TEXT("/Game/Jiashu/MiniGames/TestMiniGame_WalkToGoal/L_WalkToGoalMiniGame.L_WalkToGoalMiniGame"));
+    Host0->MinigameMap = TSoftObjectPtr<UWorld>(Map);
+    Host1->MinigameMap = TSoftObjectPtr<UWorld>(Map);
+    Host1->InstanceLocation = FVector(100000, 20000, 0);
+    Host0->Seat = 2;
+    TestFalse(TEXT("Invalid seat refused before loading"), FArcadeInstanceTestAccess::Start(Host0, Input));
+    TestTrue(TEXT("Invalid request leaves board input alone"), Input->GetInputReceiver(0) == Board0);
+    Host0->Seat = 0;
+    TestTrue(TEXT("First asynchronous load accepted"), FArcadeInstanceTestAccess::Start(Host0, Input));
+    TestTrue(TEXT("Loading suspends only its seat"), Input->GetInputReceiver(0) == Host0 && Input->GetInputReceiver(1) == Board1);
+    TestFalse(TEXT("Duplicate request rejected"), FArcadeInstanceTestAccess::Start(Host0, Input));
+    auto* Rival = World->SpawnActor<AArcadeMinigameInstanceHost>();
+    Rival->MinigameMap = TSoftObjectPtr<UWorld>(Map);
+    TestFalse(TEXT("Another host cannot reserve loading seat"), FArcadeInstanceTestAccess::Start(Rival, Input));
+    TestTrue(TEXT("Same map loads for second seat"), FArcadeInstanceTestAccess::Start(Host1, Input));
+    World->FlushLevelStreaming();
+    ULevel* Level0 = Host0->StreamingLevel ? Host0->StreamingLevel->GetLoadedLevel() : nullptr;
+    ULevel* Level1 = Host1->StreamingLevel ? Host1->StreamingLevel->GetLoadedLevel() : nullptr;
+    if (TestNotNull(TEXT("First real map loaded"), Level0) && TestNotNull(TEXT("Second real map loaded"), Level1))
+    {
+        TestTrue(TEXT("Distinct level objects"), Level0 != Level1);
+        for (AActor* Actor0 : Level0->Actors)
+            if (auto* Entry0 = Cast<AArcadeMinigameEntry>(Actor0))
+                for (AActor* Actor1 : Level1->Actors)
+                    if (auto* Entry1 = Cast<AArcadeMinigameEntry>(Actor1))
+                        TestTrue(TEXT("Map placement applies independent translation"),
+                            (Entry1->GetActorLocation() - Entry0->GetActorLocation()).Equals(FVector(0, 20000, 0), 0.1));
+        // Verify the user's serialized Entry actor references are remapped into each copy.
+        // Replace gameplay entries in memory afterwards so host tests do not execute user rules/UI.
+        int32 LocalReferences = 0;
+        for (ULevel* Level : { Level0, Level1 })
+        {
+            const auto Actors = Level->Actors;
+            int32 EntryCount = 0;
+            for (AActor* Actor : Actors)
+                if (auto* Entry = Cast<AArcadeMinigameEntry>(Actor))
+                {
+                    ++EntryCount;
+                    for (TFieldIterator<FObjectProperty> It(Entry->GetClass()); It; ++It)
+                        if (auto* Reference = Cast<AActor>(It->GetObjectPropertyValue_InContainer(Entry)))
+                        {
+                            TestTrue(TEXT("Entry reference belongs to this instance"), Reference->GetLevel() == Level);
+                            ++LocalReferences;
+                        }
+                    Entry->Destroy();
+                }
+            TestEqual(TEXT("Sample contains one entry"), EntryCount, 1);
+            FActorSpawnParameters Params;
+            Params.OverrideLevel = Level;
+            World->SpawnActor<AArcadeMinigameEntry>(AArcadeMinigameEntry::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator, Params);
+        }
+        TestTrue(TEXT("Sample local actor references inspected"), LocalReferences >= 2);
+        Host0->Tick(0);
+        Host1->Tick(0);
+        TestEqual(TEXT("First host running"), Host0->State, EArcadeInstanceState::Running);
+        TestEqual(TEXT("Second host running"), Host1->State, EArcadeInstanceState::Running);
+        if (Host0->ActiveRun && Host1->ActiveRun)
+        {
+            auto* OldRun = Host0->ActiveRun.Get();
+            TestTrue(TEXT("Submit first result"), OldRun->Finish(3.5));
+            Host0->Tick(0);
+            TestTrue(TEXT("Board input restored"), Input->GetInputReceiver(0) == Board0);
+            TestEqual(TEXT("Other instance continues"), Host1->ActiveRun->State, EArcadeMinigameState::Running);
+            World->FlushLevelStreaming();
+            Host0->Tick(0);
+            TestEqual(TEXT("Unloaded host reusable"), Host0->State, EArcadeInstanceState::Idle);
+            TestTrue(TEXT("Other level stays loaded"), Host1->StreamingLevel->GetLoadedLevel() == Level1);
+            TestFalse(TEXT("Late result rejected"), OldRun->Finish(100));
+            TestTrue(TEXT("Restart accepted after unload"), FArcadeInstanceTestAccess::Start(Host0, Input));
+            // Destroy during asynchronous loading; no late callback should start a run.
+            Host0->Destroy();
+            TestTrue(TEXT("Destroy while loading returns input"), Input->GetInputReceiver(0) == Board0);
+            Input->SetInputReceiver(1, Board0); // A later menu-like receiver owns the seat.
+            Host1->ActiveRun->Finish(7);
+            Host1->Tick(0);
+            TestTrue(TEXT("Later receiver preserved"), Input->GetInputReceiver(1) == Board0);
+            World->FlushLevelStreaming();
+            Host1->Tick(0);
+            TestEqual(TEXT("Second instance unloaded"), Host1->State, EArcadeInstanceState::Idle);
+        }
+    }
+    World->EndPlay(EEndPlayReason::Quit);
+    World->FlushLevelStreaming();
     GEngine->DestroyWorldContext(World);
     World->DestroyWorld(false);
     return true;

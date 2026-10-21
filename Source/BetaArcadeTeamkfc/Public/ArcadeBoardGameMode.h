@@ -25,6 +25,9 @@ class BETAARCADETEAMKFC_API AArcadeBoardGameMode : public AGameModeBase
 public:
     AArcadeBoardGameMode();
     virtual void StartPlay() override;
+    void SetBoardInputEnabled(bool bEnabled);
+    bool ResetBoardCharacters();
+    bool AreBoardCharactersReady() const { return GetSeatCharacter(0) && GetSeatCharacter(1); }
     virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
     /** Seat is 0/1, not a PlayerController index. */
@@ -38,5 +41,7 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Arcade|Board", meta=(ClampMin="5", ClampMax="170")) float CameraFOV = 60.f;
 
 private:
+    bool bBoardInputEnabled = true;
+    TArray<FTransform> SpawnTransforms;
     UPROPERTY(Transient) TArray<TObjectPtr<AArcadeBoardCharacter>> SeatCharacters;
 };

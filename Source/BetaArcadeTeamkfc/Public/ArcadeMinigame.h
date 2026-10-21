@@ -10,6 +10,7 @@ class UArcadeInputSubsystem;
 class UArcadeMinigameSubsystem;
 class AArcadeMinigameEntry;
 class UUserWidget;
+class UCameraComponent;
 
 UENUM(BlueprintType)
 enum class EArcadeMinigameState : uint8 { Preparing, Ready, Running, Ending, Ended };
@@ -92,6 +93,13 @@ public:
     UFUNCTION(BlueprintPure, Category="Arcade|Minigame|UI") UUserWidget* GetMinigameWidget() const { return PresentationWidget; }
     void SetPresentationWidget(UUserWidget* Widget);
 
+    /** Optional explicit actor in THIS level; may be a CameraActor or a character with a camera. */
+    UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category="Arcade|Minigame|Camera") TObjectPtr<AActor> CameraSourceActor;
+    /** When set, selects a component by its component tag on CameraSourceActor. */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Arcade|Minigame|Camera") FName CameraComponentTag;
+    /** Override to return a specific camera component. Hosts validate that it belongs to this instance. */
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="Arcade|Minigame|Camera") UCameraComponent* GetMinigameCamera() const;
+
     /** Default calls Session.MarkReady. Override for async preparation and mark ready explicitly. */
     UFUNCTION(BlueprintNativeEvent, Category="Arcade|Minigame") void OnPrepare(UArcadeMinigameSession* Run);
     UFUNCTION(BlueprintImplementableEvent, Category="Arcade|Minigame") void OnStarted(UArcadeMinigameSession* Run);
@@ -128,9 +136,12 @@ protected:
     virtual bool DoesSupportWorldType(EWorldType::Type WorldType) const override;
 private:
     friend class UArcadeMinigameSession;
+    friend class AArcadeMinigameInstanceHost;
     friend struct FArcadeMinigameTestAccess;
     UPROPERTY(Transient) TArray<TObjectPtr<UArcadeMinigameSession>> Sessions;
     bool bShuttingDown = false;
-    UArcadeMinigameSession* PrepareWithInput(int32 Seat, AArcadeMinigameEntry* Entry, UArcadeInputSubsystem* Input);
+    /** A loading host can pass the receiver it suspended before loading (including null). */
+    UArcadeMinigameSession* PrepareWithInput(int32 Seat, AArcadeMinigameEntry* Entry, UArcadeInputSubsystem* Input,
+        TOptional<TWeakObjectPtr<UObject>> OriginalReceiver = {});
     void Shutdown();
 };

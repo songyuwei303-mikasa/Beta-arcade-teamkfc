@@ -6,6 +6,8 @@
 #include "Engine/World.h"
 #include "Components/SceneComponent.h"
 #include "Blueprint/UserWidget.h"
+#include "Camera/CameraComponent.h"
+#include "Engine/Level.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogArcadeMinigame, Log, All);
 
@@ -23,6 +25,30 @@ void AArcadeMinigameEntry::OnPrepare_Implementation(UArcadeMinigameSession* Run)
 void AArcadeMinigameEntry::SetPresentationWidget(UUserWidget* Widget)
 {
     PresentationWidget = Widget;
+}
+
+UCameraComponent* AArcadeMinigameEntry::GetMinigameCamera_Implementation() const
+{
+    AActor* Source = CameraSourceActor;
+    if (!Source)
+    {
+        for (AActor* Actor : GetLevel()->Actors)
+            if (IsValid(Actor) && Actor->ActorHasTag(TEXT("ArcadeMinigameCamera")))
+            {
+                if (Source) return nullptr; // Ambiguous tags are configuration errors.
+                Source = Actor;
+            }
+    }
+    if (!IsValid(Source) || Source->GetLevel() != GetLevel()) return nullptr;
+    TInlineComponentArray<UCameraComponent*> Cameras(Source);
+    UCameraComponent* Selected = nullptr;
+    for (auto* Camera : Cameras)
+        if (CameraComponentTag.IsNone() ? Camera->IsActive() : Camera->ComponentHasTag(CameraComponentTag))
+        {
+            if (Selected) return nullptr;
+            Selected = Camera;
+        }
+    return Selected;
 }
 
 void AArcadeMinigameEntry::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -50,7 +76,8 @@ UArcadeMinigameSession* UArcadeMinigameSubsystem::PrepareSession(int32 Seat, AAr
     return PrepareWithInput(Seat, Entry, GI ? GI->GetSubsystem<UArcadeInputSubsystem>() : nullptr);
 }
 
-UArcadeMinigameSession* UArcadeMinigameSubsystem::PrepareWithInput(int32 Seat, AArcadeMinigameEntry* Entry, UArcadeInputSubsystem* Input)
+UArcadeMinigameSession* UArcadeMinigameSubsystem::PrepareWithInput(int32 Seat, AArcadeMinigameEntry* Entry, UArcadeInputSubsystem* Input,
+    TOptional<TWeakObjectPtr<UObject>> OriginalReceiver)
 {
     if (bShuttingDown || GetWorld()->bIsTearingDown || Seat < 0 || Seat > 1 || !IsValid(Input) ||
         !IsValid(Entry) || Entry->bEndingPlay || !Entry->HasActorBegunPlay() || Entry->GetWorld() != GetWorld() ||
@@ -63,7 +90,7 @@ UArcadeMinigameSession* UArcadeMinigameSubsystem::PrepareWithInput(int32 Seat, A
     Run->Manager = this;
     Run->Entry = Entry;
     Run->Input = Input;
-    Run->ReturnReceiver = Input->GetInputReceiver(Seat);
+    Run->ReturnReceiver = OriginalReceiver.IsSet() ? OriginalReceiver.GetValue() : TWeakObjectPtr<UObject>(Input->GetInputReceiver(Seat));
     Sessions.SetNum(2);
     Sessions[Seat] = Run;
     Entry->Session = Run;

@@ -1,5 +1,7 @@
 # 第一个小游戏：走到终点，确认后提交用时
 
+后续 E 更新：本教程的玩法接线保持有效；独立测试现在也通过 SceneCapture/RT/外框显示 UI，相机可以来自角色内部组件，详见 [MinigamePresentation.md](MinigamePresentation.md)。原文中“尚无画中画”的说明是历史状态。计时 Widget 不需要改为自己 AddToViewport。
+
 本教程对应阶段 B。C 的公共测试 GameMode 已加入源码：`ArcadeMinigameTestGameMode`。重开编译后的编辑器再创建蓝图。教程中的 BP/WBP/Level 资产需要你在编辑器创建；不是源码自动生成的现成资产。
 
 目标：一个角色自由移动，到终点附近按确认获胜；计时从**第一次非零方向输入**开始，到成功确认止，停下时仍继续计时。这个定义对应“玩家开始操作”，不是检测角色脚底实际发生位移。如果以后要精确到实际离开起点，再单独调整规则。
@@ -286,6 +288,6 @@ File → New Level → **Basic**（普通非 World Partition 小地图），另�
 
 ## 11. UI 与画中画的边界
 
-现在测试环境将 WBP 放到独立游戏视口；未来 E 将同一 Widget 放入对应席位的 UI 容器，与 Render Target 画面叠放。**AddToViewport 的 UI 不会自动被 SceneCapture 拍入 RT。** 此处刻意让公共层创建和承载 Widget，避免小游戏作者以后重写业务 UI。
+公共层创建并承载 Widget，再放进 E 的外框，与 Render Target 叠放。**不要自己 AddToViewport**：那样的 UI 不会被 SceneCapture 拍进画面，也会和正式容器重复。
 
-本教程可以验证独立 Level 的移动、计时、确认、提交和 UI 更新。它不能证明尚未实现的动态双实例或画中画正确。下一步用你做好的样例测 D，再测 E，关注两个计时器互不影响、UI 不串席、尺寸／锚点／裁切正确。
+本教程可以验证独立 Level 的移动、计时、确认、提交和 UI 更新。动态双实例和画中画已另有实现，见 DynamicMinigameInstances.md 与 MinigamePresentation.md；本教程不能代替那两次验收。

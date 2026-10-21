@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "ArcadeMinigamePresentation.h"
 #include "ArcadeMinigameTestGameMode.generated.h"
 
 class AArcadeMinigameEntry;
@@ -23,12 +24,16 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Arcade|Minigame|Test", meta=(ClampMin="0", ClampMax="1")) int32 TestSeat = 0;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Arcade|Minigame|Test", meta=(ClampMin="1")) float PreparationTimeout = 30.f;
     UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="Arcade|Minigame|Test") TObjectPtr<UArcadeMinigameSession> TestSession;
-    /** Requires one entry and one CameraActor tagged ArcadeMinigameCamera in the persistent level. */
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Arcade|Presentation") FArcadePresentationSettings PresentationSettings;
+    /** Keep the finished frame for inspection. Disable to test the normal closing animation. */
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Arcade|Presentation") bool bKeepResultVisible = true;
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="Arcade|Presentation") TObjectPtr<AArcadeMinigamePresentation> Presentation;
+    /** Test helper: resolves the entry camera. Owner is a CameraActor only when the source is one. */
     bool FindTestActors(AArcadeMinigameEntry*& OutEntry, ACameraActor*& OutCamera) const;
 private:
     friend struct FArcadeMinigameTestAccess;
     UPROPERTY(Transient) TObjectPtr<AArcadeMinigameEntry> TestEntry;
-    UPROPERTY(Transient) TObjectPtr<UUserWidget> TestWidget;
+    bool bEnablePresentation = true;
     double PreparedAt = 0;
     void TryStartPreparedSession();
 };

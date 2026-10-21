@@ -1,4 +1,6 @@
 #include "ArcadeBoardCharacter.h"
+#include "ArcadeBoardCell.h"
+#include "EngineUtils.h"
 #include "ArcadeInputSubsystem.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/StaticMeshComponent.h"
@@ -65,7 +67,21 @@ void AArcadeBoardCharacter::ArcadeDirection_Implementation(int32 Seat, FVector2D
 
 void AArcadeBoardCharacter::ArcadeButton_Implementation(int32 Seat, EArcadeInputAction Action, bool bPressed)
 {
-    if (Seat == LogicalSeat && LogicalSeat != INDEX_NONE) OnBoardButton(Seat, Action, bPressed);
+    if (Seat != LogicalSeat || LogicalSeat == INDEX_NONE) return;
+    if (Action == EArcadeInputAction::Confirm && bPressed)
+    {
+        AArcadeBoardCell* Nearest = nullptr;
+        double BestDistance = TNumericLimits<double>::Max();
+        for (TActorIterator<AArcadeBoardCell> It(GetWorld()); It; ++It)
+        {
+            if (!It->ContainsCharacter(this)) continue;
+            const double Distance = FVector::DistSquared(GetActorLocation(), It->GetActorLocation());
+            if (Distance < BestDistance || (Distance == BestDistance && Nearest && It->GetPathName() < Nearest->GetPathName()))
+            { Nearest = *It; BestDistance = Distance; }
+        }
+        if (Nearest && Nearest->TryInteract(this)) return;
+    }
+    OnBoardButton(Seat, Action, bPressed);
 }
 
 void AArcadeBoardCharacter::StopBoardMovement()

@@ -1,6 +1,6 @@
 # 正式关卡：双席位移动基础版
 
-本阶段按用户确认实现类似胡闹厨房的自由连续移动、固定俯视共享相机和场景碰撞，用户已确认双人移动与输入阶段性测试通过。小游戏会话阶段 A 已加入，见 [MinigameSession.md](MinigameSession.md)；未实现格子交互、正式菜单页面、动态关卡实例、画中画或小游戏测试 GameMode。
+本阶段按用户确认实现类似胡闹厨房的自由连续移动、固定俯视共享相机和场景碰撞，用户已确认双人移动与输入阶段性测试通过。小游戏会话、动态实例和画中画分别见 [MinigameSession.md](MinigameSession.md)、[DynamicMinigameInstances.md](DynamicMinigameInstances.md)、[MinigamePresentation.md](MinigamePresentation.md)。格子交互和正式菜单页面仍未实现。
 
 ## L_Main 编辑器配置（需要手动完成）
 
@@ -141,3 +141,5 @@
 原因：`FArcadeSonyInput::Poll` 曾在**游戏线程**每 1 秒调用 `IDirectInput8::EnumDevices`。该 API 已知会长时间占用 DirectInput 锁并解析设备 INF（Allegro／部分游戏曾因此改掉“每秒枚举”）。卡顿放大单帧 `DeltaSeconds`，`CharacterMovement` 仍按缓存方向积分，表现为闪现。即使未连接 PS 手柄，只要 Windows 上创建了 Sony 后端也会每秒枚举。
 
 修复：改为按需扫描（见 `ArcadeSonyInput.cpp` / InputSystem.md）。验收：持续移动 30 秒以上应不再出现约 1Hz 的规律卡顿；PIE 控制台可用 `stat hitch`／`stat unit` 对照。新插入的 PS 手柄需 Reassign／`AutoAssignSeats` 后才会进入来源列表。
+
+2026-10-21 更新：Confirm 按下现在优先尝试所在格子的小游戏交互，成功后消费该按下；未成功才继续 OnBoardButton。详见 [BoardCells.md](BoardCells.md)。覆盖原始接口仍须调用父类。
