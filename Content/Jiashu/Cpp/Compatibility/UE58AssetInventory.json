@@ -1,0 +1,1324 @@
+[
+  {
+    "package": "/Game/Jiashu/Board/DA_DefaultPool",
+    "exportCount": 1,
+    "importCount": 4,
+    "savedBy": "5.8.3-58210709+++UE5+Release-5.8",
+    "compatibleWith": "5.8.0-55116800+++UE5+Release-5.8",
+    "customVersions": [
+      {
+        "Key": "601D1886AC644F84AA16D3DE0DEAC7D6",
+        "Version": 268
+      },
+      {
+        "Key": "E4B068EDF49442E9A231DA0B2E46BB41",
+        "Version": 40
+      }
+    ],
+    "classes": [
+      "ArcadeMinigamePool"
+    ]
+  },
+  {
+    "package": "/Game/Jiashu/Board/DA_WalkToGoal",
+    "exportCount": 1,
+    "importCount": 2,
+    "savedBy": "5.8.3-58210709+++UE5+Release-5.8",
+    "compatibleWith": "5.8.0-55116800+++UE5+Release-5.8",
+    "customVersions": [
+      {
+        "Key": "601D1886AC644F84AA16D3DE0DEAC7D6",
+        "Version": 268
+      },
+      {
+        "Key": "E4B068EDF49442E9A231DA0B2E46BB41",
+        "Version": 40
+      }
+    ],
+    "classes": [
+      "ArcadeMinigameDefinition"
+    ]
+  },
+  {
+    "package": "/Game/Jiashu/CharacterBP/BP_ArcadeBoardCharacter",
+    "exportCount": 29,
+    "importCount": 53,
+    "savedBy": "5.8.3-58210709+++UE5+Release-5.8",
+    "compatibleWith": "5.8.0-55116800+++UE5+Release-5.8",
+    "customVersions": [
+      {
+        "Key": "12F88B9F88754AFCA67CD90C383ABD29",
+        "Version": 49
+      },
+      {
+        "Key": "29E575DDE0A346279D10D276232CDCEA",
+        "Version": 17
+      },
+      {
+        "Key": "375EC13C06E448FBB50084F0262A717E",
+        "Version": 4
+      },
+      {
+        "Key": "59DA5D5212324948B878597870B8E98B",
+        "Version": 9
+      },
+      {
+        "Key": "5B4C06B724634AF8805BBF70CDF5D0DD",
+        "Version": 15
+      },
+      {
+        "Key": "601D1886AC644F84AA16D3DE0DEAC7D6",
+        "Version": 268
+      },
+      {
+        "Key": "697DD581E64F41ABAA4A51ECBEB7B628",
+        "Version": 123
+      },
+      {
+        "Key": "9C54D522A8264FBE9421074661B482D0",
+        "Version": 44
+      },
+      {
+        "Key": "B0D832E41F894F0DACCF7EB736FD4AA2",
+        "Version": 10
+      },
+      {
+        "Key": "B6E31B1CD29F11EC857E9F856F9970E2",
+        "Version": 1
+      },
+      {
+        "Key": "CFFC743F43B04480939114DF171D2073",
+        "Version": 37
+      },
+      {
+        "Key": "D89B5E4224BD4D468412ACA8DF641779",
+        "Version": 68
+      },
+      {
+        "Key": "E4B068EDF49442E9A231DA0B2E46BB41",
+        "Version": 40
+      },
+      {
+        "Key": "E70863686B234C5884391B7016265E91",
+        "Version": 20
+      }
+    ],
+    "classes": [
+      "ArcadeBoardCharacter",
+      "EdGraphSchema_K2",
+      "K2Node_CallFunction",
+      "K2Node_Event",
+      "K2Node_FunctionEntry",
+      "K2Node_SwitchInteger",
+      "K2Node_VariableGet",
+      "Function",
+      "Object",
+      "Actor",
+      "ArrowComponent",
+      "Blueprint",
+      "BlueprintGeneratedClass",
+      "CapsuleComponent",
+      "CharacterMovementComponent",
+      "EdGraph",
+      "KismetMathLibrary",
+      "KismetSystemLibrary",
+      "MaterialInterface",
+      "PrimitiveComponent",
+      "SceneComponent",
+      "SCS_Node",
+      "SimpleConstructionScript",
+      "SkeletalMeshComponent",
+      "StaticMeshComponent",
+      "TextRenderComponent"
+    ]
+  },
+  {
+    "package": "/Game/Jiashu/GameModeOverride/BP_ArcadeBoardGameMode",
+    "exportCount": 11,
+    "importCount": 19,
+    "savedBy": "5.8.3-58210709+++UE5+Release-5.8",
+    "compatibleWith": "5.8.0-55116800+++UE5+Release-5.8",
+    "customVersions": [
+      {
+        "Key": "375EC13C06E448FBB50084F0262A717E",
+        "Version": 4
+      },
+      {
+        "Key": "59DA5D5212324948B878597870B8E98B",
+        "Version": 9
+      },
+      {
+        "Key": "601D1886AC644F84AA16D3DE0DEAC7D6",
+        "Version": 268
+      },
+      {
+        "Key": "697DD581E64F41ABAA4A51ECBEB7B628",
+        "Version": 123
+      },
+      {
+        "Key": "9C54D522A8264FBE9421074661B482D0",
+        "Version": 44
+      },
+      {
+        "Key": "B0D832E41F894F0DACCF7EB736FD4AA2",
+        "Version": 10
+      },
+      {
+        "Key": "CFFC743F43B04480939114DF171D2073",
+        "Version": 37
+      },
+      {
+        "Key": "D89B5E4224BD4D468412ACA8DF641779",
+        "Version": 68
+      },
+      {
+        "Key": "E4B068EDF49442E9A231DA0B2E46BB41",
+        "Version": 40
+      },
+      {
+        "Key": "E70863686B234C5884391B7016265E91",
+        "Version": 20
+      }
+    ],
+    "classes": [
+      "ArcadeBoardGameMode",
+      "EdGraphSchema_K2",
+      "K2Node_Event",
+      "K2Node_FunctionEntry",
+      "Object",
+      "Actor",
+      "Blueprint",
+      "BlueprintGeneratedClass",
+      "EdGraph",
+      "SceneComponent",
+      "SCS_Node",
+      "SimpleConstructionScript"
+    ]
+  },
+  {
+    "package": "/Game/Jiashu/Levels/L_Main",
+    "exportCount": 85,
+    "importCount": 90,
+    "savedBy": "5.8.3-58210709+++UE5+Release-5.8",
+    "compatibleWith": "5.8.0-55116800+++UE5+Release-5.8",
+    "customVersions": [
+      {
+        "Key": "12F88B9F88754AFCA67CD90C383ABD29",
+        "Version": 49
+      },
+      {
+        "Key": "1ED048F42F2E4C6889D053A4F18F102D",
+        "Version": 1
+      },
+      {
+        "Key": "29E575DDE0A346279D10D276232CDCEA",
+        "Version": 17
+      },
+      {
+        "Key": "59DA5D5212324948B878597870B8E98B",
+        "Version": 9
+      },
+      {
+        "Key": "5B4C06B724634AF8805BBF70CDF5D0DD",
+        "Version": 15
+      },
+      {
+        "Key": "601D1886AC644F84AA16D3DE0DEAC7D6",
+        "Version": 268
+      },
+      {
+        "Key": "697DD581E64F41ABAA4A51ECBEB7B628",
+        "Version": 123
+      },
+      {
+        "Key": "9C54D522A8264FBE9421074661B482D0",
+        "Version": 44
+      },
+      {
+        "Key": "9DFFBCD6494F0158E22112823C92A888",
+        "Version": 11
+      },
+      {
+        "Key": "B6E31B1CD29F11EC857E9F856F9970E2",
+        "Version": 1
+      },
+      {
+        "Key": "CFFC743F43B04480939114DF171D2073",
+        "Version": 37
+      },
+      {
+        "Key": "D89B5E4224BD4D468412ACA8DF641779",
+        "Version": 68
+      },
+      {
+        "Key": "E4B068EDF49442E9A231DA0B2E46BB41",
+        "Version": 40
+      },
+      {
+        "Key": "E70863686B234C5884391B7016265E91",
+        "Version": 20
+      }
+    ],
+    "classes": [
+      "ArcadeBoardRound",
+      "ArrowComponent",
+      "BillboardComponent",
+      "BoxComponent",
+      "Brush",
+      "BrushComponent",
+      "CameraActor",
+      "CameraComponent",
+      "CapsuleComponent",
+      "DirectionalLight",
+      "DirectionalLightComponent",
+      "ExponentialHeightFog",
+      "ExponentialHeightFogComponent",
+      "Level",
+      "Model",
+      "PlayerStart",
+      "Polys",
+      "SceneComponent",
+      "SkyAtmosphere",
+      "SkyAtmosphereComponent",
+      "SkyLight",
+      "SkyLightComponent",
+      "StaticMeshActor",
+      "StaticMeshComponent",
+      "VolumetricCloud",
+      "VolumetricCloudComponent",
+      "World",
+      "WorldSettings",
+      "NavArea_Obstacle",
+      "NavigationSystemModuleConfig",
+      "WorldThumbnailInfo"
+    ]
+  },
+  {
+    "package": "/Game/Jiashu/Levels/L_TestingLevel",
+    "exportCount": 34,
+    "importCount": 64,
+    "savedBy": "5.8.3-58210709+++UE5+Release-5.8",
+    "compatibleWith": "5.8.0-55116800+++UE5+Release-5.8",
+    "customVersions": [
+      {
+        "Key": "12F88B9F88754AFCA67CD90C383ABD29",
+        "Version": 49
+      },
+      {
+        "Key": "1ED048F42F2E4C6889D053A4F18F102D",
+        "Version": 1
+      },
+      {
+        "Key": "29E575DDE0A346279D10D276232CDCEA",
+        "Version": 17
+      },
+      {
+        "Key": "59DA5D5212324948B878597870B8E98B",
+        "Version": 9
+      },
+      {
+        "Key": "5B4C06B724634AF8805BBF70CDF5D0DD",
+        "Version": 15
+      },
+      {
+        "Key": "601D1886AC644F84AA16D3DE0DEAC7D6",
+        "Version": 268
+      },
+      {
+        "Key": "697DD581E64F41ABAA4A51ECBEB7B628",
+        "Version": 123
+      },
+      {
+        "Key": "9C54D522A8264FBE9421074661B482D0",
+        "Version": 44
+      },
+      {
+        "Key": "9DFFBCD6494F0158E22112823C92A888",
+        "Version": 11
+      },
+      {
+        "Key": "B6E31B1CD29F11EC857E9F856F9970E2",
+        "Version": 1
+      },
+      {
+        "Key": "CFFC743F43B04480939114DF171D2073",
+        "Version": 37
+      },
+      {
+        "Key": "D89B5E4224BD4D468412ACA8DF641779",
+        "Version": 68
+      },
+      {
+        "Key": "E4B068EDF49442E9A231DA0B2E46BB41",
+        "Version": 40
+      },
+      {
+        "Key": "E70863686B234C5884391B7016265E91",
+        "Version": 20
+      }
+    ],
+    "classes": [
+      "ArcadeInputDemoGameMode",
+      "ArrowComponent",
+      "BillboardComponent",
+      "Brush",
+      "BrushComponent",
+      "CapsuleComponent",
+      "DirectionalLight",
+      "DirectionalLightComponent",
+      "ExponentialHeightFog",
+      "ExponentialHeightFogComponent",
+      "Level",
+      "Model",
+      "PlayerStart",
+      "Polys",
+      "SkyAtmosphere",
+      "SkyAtmosphereComponent",
+      "SkyLight",
+      "SkyLightComponent",
+      "StaticMeshActor",
+      "StaticMeshComponent",
+      "VolumetricCloud",
+      "VolumetricCloudComponent",
+      "World",
+      "WorldSettings",
+      "NavArea_Obstacle",
+      "NavigationSystemModuleConfig",
+      "WorldThumbnailInfo"
+    ]
+  },
+  {
+    "package": "/Game/Jiashu/MiniGames/TestMiniGame_WalkToGoal/BP_WTGCharacter",
+    "exportCount": 35,
+    "importCount": 44,
+    "savedBy": "5.8.3-58210709+++UE5+Release-5.8",
+    "compatibleWith": "5.8.0-55116800+++UE5+Release-5.8",
+    "customVersions": [
+      {
+        "Key": "12F88B9F88754AFCA67CD90C383ABD29",
+        "Version": 49
+      },
+      {
+        "Key": "29E575DDE0A346279D10D276232CDCEA",
+        "Version": 17
+      },
+      {
+        "Key": "375EC13C06E448FBB50084F0262A717E",
+        "Version": 4
+      },
+      {
+        "Key": "59DA5D5212324948B878597870B8E98B",
+        "Version": 9
+      },
+      {
+        "Key": "5B4C06B724634AF8805BBF70CDF5D0DD",
+        "Version": 15
+      },
+      {
+        "Key": "601D1886AC644F84AA16D3DE0DEAC7D6",
+        "Version": 268
+      },
+      {
+        "Key": "697DD581E64F41ABAA4A51ECBEB7B628",
+        "Version": 123
+      },
+      {
+        "Key": "9C54D522A8264FBE9421074661B482D0",
+        "Version": 44
+      },
+      {
+        "Key": "B0D832E41F894F0DACCF7EB736FD4AA2",
+        "Version": 10
+      },
+      {
+        "Key": "B6E31B1CD29F11EC857E9F856F9970E2",
+        "Version": 1
+      },
+      {
+        "Key": "CFFC743F43B04480939114DF171D2073",
+        "Version": 37
+      },
+      {
+        "Key": "D89B5E4224BD4D468412ACA8DF641779",
+        "Version": 68
+      },
+      {
+        "Key": "E4B068EDF49442E9A231DA0B2E46BB41",
+        "Version": 40
+      },
+      {
+        "Key": "E70863686B234C5884391B7016265E91",
+        "Version": 20
+      }
+    ],
+    "classes": [
+      "EdGraphSchema_K2",
+      "K2Node_CallFunction",
+      "K2Node_Event",
+      "K2Node_FunctionEntry",
+      "K2Node_Knot",
+      "K2Node_VariableGet",
+      "K2Node_VariableSet",
+      "Function",
+      "Object",
+      "Actor",
+      "ArrowComponent",
+      "Blueprint",
+      "BlueprintGeneratedClass",
+      "CapsuleComponent",
+      "Character",
+      "CharacterMovementComponent",
+      "EdGraph",
+      "KismetMathLibrary",
+      "MovementComponent",
+      "Pawn",
+      "SceneComponent",
+      "SCS_Node",
+      "SimpleConstructionScript",
+      "SkeletalMeshComponent",
+      "StaticMeshComponent",
+      "NavArea_Obstacle"
+    ]
+  },
+  {
+    "package": "/Game/Jiashu/MiniGames/TestMiniGame_WalkToGoal/BP_WTGEntry",
+    "exportCount": 147,
+    "importCount": 88,
+    "savedBy": "5.8.3-58210709+++UE5+Release-5.8",
+    "compatibleWith": "5.8.0-55116800+++UE5+Release-5.8",
+    "customVersions": [
+      {
+        "Key": "375EC13C06E448FBB50084F0262A717E",
+        "Version": 4
+      },
+      {
+        "Key": "59DA5D5212324948B878597870B8E98B",
+        "Version": 9
+      },
+      {
+        "Key": "601D1886AC644F84AA16D3DE0DEAC7D6",
+        "Version": 268
+      },
+      {
+        "Key": "697DD581E64F41ABAA4A51ECBEB7B628",
+        "Version": 123
+      },
+      {
+        "Key": "9C54D522A8264FBE9421074661B482D0",
+        "Version": 44
+      },
+      {
+        "Key": "B0D832E41F894F0DACCF7EB736FD4AA2",
+        "Version": 10
+      },
+      {
+        "Key": "CFFC743F43B04480939114DF171D2073",
+        "Version": 37
+      },
+      {
+        "Key": "D89B5E4224BD4D468412ACA8DF641779",
+        "Version": 68
+      },
+      {
+        "Key": "E4B068EDF49442E9A231DA0B2E46BB41",
+        "Version": 40
+      },
+      {
+        "Key": "E70863686B234C5884391B7016265E91",
+        "Version": 20
+      }
+    ],
+    "classes": [
+      "ArcadeMinigameEntry",
+      "ArcadeMinigameSession",
+      "EdGraphSchema_K2",
+      "K2Node_BreakStruct",
+      "K2Node_CallFunction",
+      "K2Node_CommutativeAssociativeBinaryOperator",
+      "K2Node_CreateDelegate",
+      "K2Node_DynamicCast",
+      "K2Node_Event",
+      "K2Node_FunctionEntry",
+      "K2Node_IfThenElse",
+      "K2Node_Knot",
+      "K2Node_MacroInstance",
+      "K2Node_PromotableOperator",
+      "K2Node_SwitchEnum",
+      "K2Node_VariableGet",
+      "K2Node_VariableSet",
+      "Function",
+      "Object",
+      "Actor",
+      "Blueprint",
+      "BlueprintGeneratedClass",
+      "EdGraph",
+      "KismetMathLibrary",
+      "KismetSystemLibrary",
+      "SceneComponent",
+      "SCS_Node",
+      "SimpleConstructionScript",
+      "TargetPoint",
+      "UserWidget"
+    ]
+  },
+  {
+    "package": "/Game/Jiashu/MiniGames/TestMiniGame_WalkToGoal/L_WalkToGoalMiniGame",
+    "exportCount": 64,
+    "importCount": 104,
+    "savedBy": "5.8.3-58210709+++UE5+Release-5.8",
+    "compatibleWith": "5.8.0-55116800+++UE5+Release-5.8",
+    "customVersions": [
+      {
+        "Key": "12F88B9F88754AFCA67CD90C383ABD29",
+        "Version": 49
+      },
+      {
+        "Key": "1ED048F42F2E4C6889D053A4F18F102D",
+        "Version": 1
+      },
+      {
+        "Key": "29E575DDE0A346279D10D276232CDCEA",
+        "Version": 17
+      },
+      {
+        "Key": "375EC13C06E448FBB50084F0262A717E",
+        "Version": 4
+      },
+      {
+        "Key": "59DA5D5212324948B878597870B8E98B",
+        "Version": 9
+      },
+      {
+        "Key": "5B4C06B724634AF8805BBF70CDF5D0DD",
+        "Version": 15
+      },
+      {
+        "Key": "601D1886AC644F84AA16D3DE0DEAC7D6",
+        "Version": 268
+      },
+      {
+        "Key": "697DD581E64F41ABAA4A51ECBEB7B628",
+        "Version": 123
+      },
+      {
+        "Key": "9C54D522A8264FBE9421074661B482D0",
+        "Version": 44
+      },
+      {
+        "Key": "9DFFBCD6494F0158E22112823C92A888",
+        "Version": 11
+      },
+      {
+        "Key": "B0D832E41F894F0DACCF7EB736FD4AA2",
+        "Version": 10
+      },
+      {
+        "Key": "B6E31B1CD29F11EC857E9F856F9970E2",
+        "Version": 1
+      },
+      {
+        "Key": "CFFC743F43B04480939114DF171D2073",
+        "Version": 37
+      },
+      {
+        "Key": "D89B5E4224BD4D468412ACA8DF641779",
+        "Version": 68
+      },
+      {
+        "Key": "E4B068EDF49442E9A231DA0B2E46BB41",
+        "Version": 40
+      },
+      {
+        "Key": "E70863686B234C5884391B7016265E91",
+        "Version": 20
+      }
+    ],
+    "classes": [
+      "ArcadeMinigameSubsystem",
+      "ArcadeMinigameTestGameMode",
+      "EdGraphSchema_K2",
+      "K2Node_AddDelegate",
+      "K2Node_BreakStruct",
+      "K2Node_CallFunction",
+      "K2Node_CreateDelegate",
+      "K2Node_CustomEvent",
+      "K2Node_Event",
+      "K2Node_FormatText",
+      "K2Node_GetEnumeratorNameAsString",
+      "K2Node_GetSubsystem",
+      "Function",
+      "Object",
+      "Actor",
+      "ArrowComponent",
+      "BillboardComponent",
+      "BlueprintGeneratedClass",
+      "BookMark",
+      "Brush",
+      "BrushComponent",
+      "CameraActor",
+      "CameraComponent",
+      "CapsuleComponent",
+      "CharacterMovementComponent",
+      "EdGraph",
+      "KismetSystemLibrary",
+      "KismetTextLibrary",
+      "Level",
+      "LevelScriptActor",
+      "LevelScriptBlueprint",
+      "Model",
+      "NavigationSystemConfig",
+      "PlayerStart",
+      "Polys",
+      "SceneComponent",
+      "SkeletalMeshComponent",
+      "StaticMeshActor",
+      "StaticMeshComponent",
+      "TargetPoint",
+      "World",
+      "WorldSettings",
+      "NavArea_Obstacle",
+      "CubeBuilder",
+      "EdGraphNode_Comment",
+      "WorldThumbnailInfo"
+    ]
+  },
+  {
+    "package": "/Game/Jiashu/MiniGames/TestMiniGame_WalkToGoal/WBP_WTGTimer",
+    "exportCount": 22,
+    "importCount": 34,
+    "savedBy": "5.8.3-58210709+++UE5+Release-5.8",
+    "compatibleWith": "5.8.0-55116800+++UE5+Release-5.8",
+    "customVersions": [
+      {
+        "Key": "375EC13C06E448FBB50084F0262A717E",
+        "Version": 4
+      },
+      {
+        "Key": "601D1886AC644F84AA16D3DE0DEAC7D6",
+        "Version": 268
+      },
+      {
+        "Key": "697DD581E64F41ABAA4A51ECBEB7B628",
+        "Version": 123
+      },
+      {
+        "Key": "9C54D522A8264FBE9421074661B482D0",
+        "Version": 44
+      },
+      {
+        "Key": "B0D832E41F894F0DACCF7EB736FD4AA2",
+        "Version": 10
+      },
+      {
+        "Key": "CFFC743F43B04480939114DF171D2073",
+        "Version": 37
+      },
+      {
+        "Key": "D89B5E4224BD4D468412ACA8DF641779",
+        "Version": 68
+      },
+      {
+        "Key": "E4B068EDF49442E9A231DA0B2E46BB41",
+        "Version": 40
+      }
+    ],
+    "classes": [
+      "EdGraphSchema_K2",
+      "K2Node_CallFunction",
+      "K2Node_Event",
+      "K2Node_FormatText",
+      "K2Node_FunctionEntry",
+      "K2Node_VariableGet",
+      "K2Node_VariableSet",
+      "Function",
+      "Object",
+      "EdGraph",
+      "KismetTextLibrary",
+      "CanvasPanel",
+      "CanvasPanelSlot",
+      "TextBlock",
+      "UserWidget",
+      "WidgetBlueprintGeneratedClass",
+      "WidgetTree",
+      "WidgetBlueprint",
+      "WidgetGraphSchema"
+    ]
+  },
+  {
+    "package": "/Game/Jiashu/SystemBlueprint/BP_ArcadeBoardCell",
+    "exportCount": 24,
+    "importCount": 45,
+    "savedBy": "5.8.3-58210709+++UE5+Release-5.8",
+    "compatibleWith": "5.8.0-55116800+++UE5+Release-5.8",
+    "customVersions": [
+      {
+        "Key": "12F88B9F88754AFCA67CD90C383ABD29",
+        "Version": 49
+      },
+      {
+        "Key": "29E575DDE0A346279D10D276232CDCEA",
+        "Version": 17
+      },
+      {
+        "Key": "375EC13C06E448FBB50084F0262A717E",
+        "Version": 4
+      },
+      {
+        "Key": "59DA5D5212324948B878597870B8E98B",
+        "Version": 9
+      },
+      {
+        "Key": "5B4C06B724634AF8805BBF70CDF5D0DD",
+        "Version": 15
+      },
+      {
+        "Key": "601D1886AC644F84AA16D3DE0DEAC7D6",
+        "Version": 268
+      },
+      {
+        "Key": "697DD581E64F41ABAA4A51ECBEB7B628",
+        "Version": 123
+      },
+      {
+        "Key": "9C54D522A8264FBE9421074661B482D0",
+        "Version": 44
+      },
+      {
+        "Key": "B0D832E41F894F0DACCF7EB736FD4AA2",
+        "Version": 10
+      },
+      {
+        "Key": "B6E31B1CD29F11EC857E9F856F9970E2",
+        "Version": 1
+      },
+      {
+        "Key": "CFFC743F43B04480939114DF171D2073",
+        "Version": 37
+      },
+      {
+        "Key": "D89B5E4224BD4D468412ACA8DF641779",
+        "Version": 68
+      },
+      {
+        "Key": "E4B068EDF49442E9A231DA0B2E46BB41",
+        "Version": 40
+      },
+      {
+        "Key": "E70863686B234C5884391B7016265E91",
+        "Version": 20
+      }
+    ],
+    "classes": [
+      "ArcadeBoardCell",
+      "EdGraphSchema_K2",
+      "K2Node_CallFunction",
+      "K2Node_Event",
+      "K2Node_FunctionEntry",
+      "K2Node_IfThenElse",
+      "K2Node_PromotableOperator",
+      "K2Node_SwitchInteger",
+      "K2Node_VariableGet",
+      "Function",
+      "Object",
+      "Actor",
+      "Blueprint",
+      "BlueprintGeneratedClass",
+      "BoxComponent",
+      "EdGraph",
+      "KismetMathLibrary",
+      "MaterialInterface",
+      "PrimitiveComponent",
+      "SceneComponent",
+      "SCS_Node",
+      "SimpleConstructionScript",
+      "StaticMeshComponent",
+      "SceneThumbnailInfo"
+    ]
+  },
+  {
+    "package": "/Game/Jiashu/SystemBlueprint/BP_ArcadeUIManager",
+    "exportCount": 91,
+    "importCount": 78,
+    "savedBy": "5.8.3-58210709+++UE5+Release-5.8",
+    "compatibleWith": "5.8.0-55116800+++UE5+Release-5.8",
+    "customVersions": [
+      {
+        "Key": "29E575DDE0A346279D10D276232CDCEA",
+        "Version": 17
+      },
+      {
+        "Key": "375EC13C06E448FBB50084F0262A717E",
+        "Version": 4
+      },
+      {
+        "Key": "59DA5D5212324948B878597870B8E98B",
+        "Version": 9
+      },
+      {
+        "Key": "601D1886AC644F84AA16D3DE0DEAC7D6",
+        "Version": 268
+      },
+      {
+        "Key": "697DD581E64F41ABAA4A51ECBEB7B628",
+        "Version": 123
+      },
+      {
+        "Key": "9C54D522A8264FBE9421074661B482D0",
+        "Version": 44
+      },
+      {
+        "Key": "B0D832E41F894F0DACCF7EB736FD4AA2",
+        "Version": 10
+      },
+      {
+        "Key": "CFFC743F43B04480939114DF171D2073",
+        "Version": 37
+      },
+      {
+        "Key": "D89B5E4224BD4D468412ACA8DF641779",
+        "Version": 68
+      },
+      {
+        "Key": "E4B068EDF49442E9A231DA0B2E46BB41",
+        "Version": 40
+      },
+      {
+        "Key": "E70863686B234C5884391B7016265E91",
+        "Version": 20
+      }
+    ],
+    "classes": [
+      "ArcadeBoardRound",
+      "ArcadeInputSubsystem",
+      "EdGraphSchema_K2",
+      "K2Node_AddDelegate",
+      "K2Node_CallFunction",
+      "K2Node_CustomEvent",
+      "K2Node_Event",
+      "K2Node_FunctionEntry",
+      "K2Node_GetSubsystem",
+      "K2Node_IfThenElse",
+      "K2Node_Knot",
+      "K2Node_MacroInstance",
+      "K2Node_SwitchEnum",
+      "K2Node_VariableGet",
+      "K2Node_VariableSet",
+      "Function",
+      "Object",
+      "Actor",
+      "Blueprint",
+      "BlueprintGeneratedClass",
+      "EdGraph",
+      "GameplayStatics",
+      "KismetMathLibrary",
+      "KismetSystemLibrary",
+      "PlayerController",
+      "SceneComponent",
+      "SCS_Node",
+      "SimpleConstructionScript",
+      "SubsystemBlueprintLibrary",
+      "UserWidget",
+      "WidgetBlueprintLibrary",
+      "K2Node_CreateWidget",
+      "SceneThumbnailInfo"
+    ]
+  },
+  {
+    "package": "/Game/Jiashu/SystemBlueprint/BP_MiniGameInstanceHost",
+    "exportCount": 13,
+    "importCount": 18,
+    "savedBy": "5.8.3-58210709+++UE5+Release-5.8",
+    "compatibleWith": "5.8.0-55116800+++UE5+Release-5.8",
+    "customVersions": [
+      {
+        "Key": "375EC13C06E448FBB50084F0262A717E",
+        "Version": 4
+      },
+      {
+        "Key": "59DA5D5212324948B878597870B8E98B",
+        "Version": 9
+      },
+      {
+        "Key": "601D1886AC644F84AA16D3DE0DEAC7D6",
+        "Version": 268
+      },
+      {
+        "Key": "697DD581E64F41ABAA4A51ECBEB7B628",
+        "Version": 123
+      },
+      {
+        "Key": "9C54D522A8264FBE9421074661B482D0",
+        "Version": 44
+      },
+      {
+        "Key": "B0D832E41F894F0DACCF7EB736FD4AA2",
+        "Version": 10
+      },
+      {
+        "Key": "CFFC743F43B04480939114DF171D2073",
+        "Version": 37
+      },
+      {
+        "Key": "D89B5E4224BD4D468412ACA8DF641779",
+        "Version": 68
+      },
+      {
+        "Key": "E4B068EDF49442E9A231DA0B2E46BB41",
+        "Version": 40
+      },
+      {
+        "Key": "E70863686B234C5884391B7016265E91",
+        "Version": 20
+      }
+    ],
+    "classes": [
+      "ArcadeMinigameInstanceHost",
+      "EdGraphSchema_K2",
+      "K2Node_Event",
+      "K2Node_FunctionEntry",
+      "Object",
+      "Actor",
+      "Blueprint",
+      "BlueprintGeneratedClass",
+      "EdGraph",
+      "SceneComponent",
+      "SCS_Node",
+      "SimpleConstructionScript"
+    ]
+  },
+  {
+    "package": "/Game/Jiashu/SystemBlueprint/BP_Testing",
+    "exportCount": 14,
+    "importCount": 20,
+    "savedBy": "5.8.3-58210709+++UE5+Release-5.8",
+    "compatibleWith": "5.8.0-55116800+++UE5+Release-5.8",
+    "customVersions": [
+      {
+        "Key": "12F88B9F88754AFCA67CD90C383ABD29",
+        "Version": 49
+      },
+      {
+        "Key": "375EC13C06E448FBB50084F0262A717E",
+        "Version": 4
+      },
+      {
+        "Key": "59DA5D5212324948B878597870B8E98B",
+        "Version": 9
+      },
+      {
+        "Key": "5B4C06B724634AF8805BBF70CDF5D0DD",
+        "Version": 15
+      },
+      {
+        "Key": "601D1886AC644F84AA16D3DE0DEAC7D6",
+        "Version": 268
+      },
+      {
+        "Key": "697DD581E64F41ABAA4A51ECBEB7B628",
+        "Version": 123
+      },
+      {
+        "Key": "9C54D522A8264FBE9421074661B482D0",
+        "Version": 44
+      },
+      {
+        "Key": "B0D832E41F894F0DACCF7EB736FD4AA2",
+        "Version": 10
+      },
+      {
+        "Key": "CFFC743F43B04480939114DF171D2073",
+        "Version": 37
+      },
+      {
+        "Key": "D89B5E4224BD4D468412ACA8DF641779",
+        "Version": 68
+      },
+      {
+        "Key": "E4B068EDF49442E9A231DA0B2E46BB41",
+        "Version": 40
+      },
+      {
+        "Key": "E70863686B234C5884391B7016265E91",
+        "Version": 20
+      }
+    ],
+    "classes": [
+      "EdGraphSchema_K2",
+      "K2Node_Event",
+      "K2Node_FunctionEntry",
+      "Object",
+      "Actor",
+      "Blueprint",
+      "BlueprintGeneratedClass",
+      "EdGraph",
+      "SceneComponent",
+      "SCS_Node",
+      "SimpleConstructionScript",
+      "StaticMeshComponent"
+    ]
+  },
+  {
+    "package": "/Game/Jiashu/UI/WBP_MainMenu",
+    "exportCount": 56,
+    "importCount": 38,
+    "savedBy": "5.8.3-58210709+++UE5+Release-5.8",
+    "compatibleWith": "5.8.0-55116800+++UE5+Release-5.8",
+    "customVersions": [
+      {
+        "Key": "375EC13C06E448FBB50084F0262A717E",
+        "Version": 4
+      },
+      {
+        "Key": "601D1886AC644F84AA16D3DE0DEAC7D6",
+        "Version": 268
+      },
+      {
+        "Key": "697DD581E64F41ABAA4A51ECBEB7B628",
+        "Version": 123
+      },
+      {
+        "Key": "9C54D522A8264FBE9421074661B482D0",
+        "Version": 44
+      },
+      {
+        "Key": "B0D832E41F894F0DACCF7EB736FD4AA2",
+        "Version": 10
+      },
+      {
+        "Key": "CFFC743F43B04480939114DF171D2073",
+        "Version": 37
+      },
+      {
+        "Key": "D89B5E4224BD4D468412ACA8DF641779",
+        "Version": 68
+      },
+      {
+        "Key": "E4B068EDF49442E9A231DA0B2E46BB41",
+        "Version": 40
+      }
+    ],
+    "classes": [
+      "ArcadeMenuWidget",
+      "EdGraphSchema_K2",
+      "K2Node_CallDelegate",
+      "K2Node_CallFunction",
+      "K2Node_ComponentBoundEvent",
+      "K2Node_Event",
+      "K2Node_FunctionEntry",
+      "K2Node_MakeArray",
+      "K2Node_VariableGet",
+      "Function",
+      "Object",
+      "ComponentDelegateBinding",
+      "EdGraph",
+      "Button",
+      "ButtonSlot",
+      "CanvasPanel",
+      "CanvasPanelSlot",
+      "TextBlock",
+      "UserWidget",
+      "VerticalBox",
+      "VerticalBoxSlot",
+      "WidgetBlueprintGeneratedClass",
+      "WidgetTree",
+      "WidgetBlueprint",
+      "WidgetGraphSchema"
+    ]
+  },
+  {
+    "package": "/Game/Jiashu/UI/WBP_MinigameFrame",
+    "exportCount": 31,
+    "importCount": 29,
+    "savedBy": "5.8.3-58210709+++UE5+Release-5.8",
+    "compatibleWith": "5.8.0-55116800+++UE5+Release-5.8",
+    "customVersions": [
+      {
+        "Key": "375EC13C06E448FBB50084F0262A717E",
+        "Version": 4
+      },
+      {
+        "Key": "601D1886AC644F84AA16D3DE0DEAC7D6",
+        "Version": 268
+      },
+      {
+        "Key": "697DD581E64F41ABAA4A51ECBEB7B628",
+        "Version": 123
+      },
+      {
+        "Key": "9C54D522A8264FBE9421074661B482D0",
+        "Version": 44
+      },
+      {
+        "Key": "B0D832E41F894F0DACCF7EB736FD4AA2",
+        "Version": 10
+      },
+      {
+        "Key": "CFFC743F43B04480939114DF171D2073",
+        "Version": 37
+      },
+      {
+        "Key": "D89B5E4224BD4D468412ACA8DF641779",
+        "Version": 68
+      },
+      {
+        "Key": "E4B068EDF49442E9A231DA0B2E46BB41",
+        "Version": 40
+      }
+    ],
+    "classes": [
+      "ArcadeMinigameView",
+      "EdGraphSchema_K2",
+      "K2Node_Event",
+      "Object",
+      "EdGraph",
+      "Border",
+      "BorderSlot",
+      "Image",
+      "Overlay",
+      "OverlaySlot",
+      "ScaleBox",
+      "ScaleBoxSlot",
+      "SizeBox",
+      "SizeBoxSlot",
+      "UserWidget",
+      "WidgetBlueprintGeneratedClass",
+      "WidgetTree",
+      "WidgetBlueprint"
+    ]
+  },
+  {
+    "package": "/Game/Jiashu/UI/WBP_Results",
+    "exportCount": 64,
+    "importCount": 43,
+    "savedBy": "5.8.3-58210709+++UE5+Release-5.8",
+    "compatibleWith": "5.8.0-55116800+++UE5+Release-5.8",
+    "customVersions": [
+      {
+        "Key": "375EC13C06E448FBB50084F0262A717E",
+        "Version": 4
+      },
+      {
+        "Key": "601D1886AC644F84AA16D3DE0DEAC7D6",
+        "Version": 268
+      },
+      {
+        "Key": "697DD581E64F41ABAA4A51ECBEB7B628",
+        "Version": 123
+      },
+      {
+        "Key": "9C54D522A8264FBE9421074661B482D0",
+        "Version": 44
+      },
+      {
+        "Key": "B0D832E41F894F0DACCF7EB736FD4AA2",
+        "Version": 10
+      },
+      {
+        "Key": "CFFC743F43B04480939114DF171D2073",
+        "Version": 37
+      },
+      {
+        "Key": "D89B5E4224BD4D468412ACA8DF641779",
+        "Version": 68
+      },
+      {
+        "Key": "E4B068EDF49442E9A231DA0B2E46BB41",
+        "Version": 40
+      }
+    ],
+    "classes": [
+      "ArcadeMenuWidget",
+      "EdGraphSchema_K2",
+      "K2Node_CallDelegate",
+      "K2Node_CallFunction",
+      "K2Node_ComponentBoundEvent",
+      "K2Node_Event",
+      "K2Node_FunctionEntry",
+      "K2Node_MakeArray",
+      "K2Node_SwitchInteger",
+      "K2Node_VariableGet",
+      "K2Node_VariableSet",
+      "Function",
+      "Object",
+      "ComponentDelegateBinding",
+      "EdGraph",
+      "KismetMathLibrary",
+      "Button",
+      "ButtonSlot",
+      "CanvasPanel",
+      "CanvasPanelSlot",
+      "TextBlock",
+      "UserWidget",
+      "VerticalBox",
+      "VerticalBoxSlot",
+      "WidgetBlueprintGeneratedClass",
+      "WidgetTree",
+      "WidgetBlueprint",
+      "WidgetGraphSchema"
+    ]
+  },
+  {
+    "package": "/Game/Jiashu/UI/WBP_RootUI",
+    "exportCount": 50,
+    "importCount": 35,
+    "savedBy": "5.8.3-58210709+++UE5+Release-5.8",
+    "compatibleWith": "5.8.0-55116800+++UE5+Release-5.8",
+    "customVersions": [
+      {
+        "Key": "375EC13C06E448FBB50084F0262A717E",
+        "Version": 4
+      },
+      {
+        "Key": "601D1886AC644F84AA16D3DE0DEAC7D6",
+        "Version": 268
+      },
+      {
+        "Key": "697DD581E64F41ABAA4A51ECBEB7B628",
+        "Version": 123
+      },
+      {
+        "Key": "9C54D522A8264FBE9421074661B482D0",
+        "Version": 44
+      },
+      {
+        "Key": "B0D832E41F894F0DACCF7EB736FD4AA2",
+        "Version": 10
+      },
+      {
+        "Key": "CFFC743F43B04480939114DF171D2073",
+        "Version": 37
+      },
+      {
+        "Key": "D89B5E4224BD4D468412ACA8DF641779",
+        "Version": 68
+      },
+      {
+        "Key": "E4B068EDF49442E9A231DA0B2E46BB41",
+        "Version": 40
+      }
+    ],
+    "classes": [
+      "EdGraphSchema_K2",
+      "K2Node_CallFunction",
+      "K2Node_Event",
+      "K2Node_FunctionEntry",
+      "K2Node_FunctionResult",
+      "K2Node_VariableGet",
+      "Function",
+      "Object",
+      "EdGraph",
+      "Border",
+      "BorderSlot",
+      "CanvasPanel",
+      "CanvasPanelSlot",
+      "TextBlock",
+      "UserWidget",
+      "WidgetBlueprintGeneratedClass",
+      "WidgetSwitcher",
+      "WidgetSwitcherSlot",
+      "WidgetTree",
+      "WidgetBlueprint",
+      "WidgetGraphSchema"
+    ]
+  }
+]

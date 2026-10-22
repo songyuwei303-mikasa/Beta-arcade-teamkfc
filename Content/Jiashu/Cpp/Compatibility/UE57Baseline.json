@@ -1,0 +1,359 @@
+﻿{
+	"devices": [
+		{
+			"deviceName": "HUAWEIMATEBOOK9",
+			"instance": "D17A957E45F36D96E94D48B72AD2F266",
+			"instanceName": "HUAWEIMATEBOOK9-38496",
+			"platform": "WindowsEditor",
+			"oSVersion": "Windows 11 (25H2) [10.0.26200.9711] ",
+			"model": "Default",
+			"gPU": "Intel(R) UHD Graphics",
+			"cPUModel": "13th Gen Intel(R) Core(TM) i9-13980HX",
+			"rAMInGB": 32,
+			"renderMode": "SM6",
+			"rHI": "",
+			"appInstanceLog": ""
+		}
+	],
+	"reportCreatedOn": "2026.10.22-11.59.38",
+	"succeeded": 11,
+	"succeededWithWarnings": 0,
+	"failed": 2,
+	"notRun": 0,
+	"inProcess": 0,
+	"totalDuration": 0.30043196678161621,
+	"comparisonExported": false,
+	"comparisonExportDirectory": "",
+	"tests": [
+		{
+			"testDisplayName": "CellRecords",
+			"fullTestPath": "Arcade.Board.CellRecords",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"D17A957E45F36D96E94D48B72AD2F266"
+			],
+			"duration": 0.0095287002623081207,
+			"dateTime": "2026.10.22-11.59.37",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "MapAudit",
+			"fullTestPath": "Arcade.Board.MapAudit",
+			"tags": [],
+			"state": "Fail",
+			"deviceInstance": [
+				"D17A957E45F36D96E94D48B72AD2F266"
+			],
+			"duration": 0.073875099420547485,
+			"dateTime": "2026.10.22-11.59.37",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogStreaming: FlushAsyncLoading(473): 1 QueuedPackages, 0 AsyncPackages",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-11.59.37"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected '/Game/Jiashu/Levels/L_Main' to be not null.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "F:\\UnrealProject\\Beta-arcade-teamkfc\\Source\\BetaArcadeTeamkfc\\Private\\ArcadeInputTests.cpp",
+					"lineNumber": 458,
+					"timestamp": "2026.10.22-11.59.37"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected '/Game/Jiashu/Levels/L_TestingLevel' to be not null.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "F:\\UnrealProject\\Beta-arcade-teamkfc\\Source\\BetaArcadeTeamkfc\\Private\\ArcadeInputTests.cpp",
+					"lineNumber": 458,
+					"timestamp": "2026.10.22-11.59.37"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LoadErrors: Package '/Game/Jiashu/Levels/L_Main' has been saved with a newer engine version and can't be loaded. Current EngineVersion: 5.7.4-51494982+++UE5+Release-5.7 (Licensee=0). Package EngineVersion: 5.8.0-55116800+++UE5+Release-5.8 (Licensee=0)",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-11.59.37"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LoadErrors: Package '/Game/Jiashu/Levels/L_TestingLevel' has been saved with a newer engine version and can't be loaded. Current EngineVersion: 5.7.4-51494982+++UE5+Release-5.7 (Licensee=0). Package EngineVersion: 5.8.0-55116800+++UE5+Release-5.8 (Licensee=0)",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-11.59.37"
+				}
+			],
+			"warnings": 2,
+			"errors": 2,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "PoolCoverage",
+			"fullTestPath": "Arcade.Board.PoolCoverage",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"D17A957E45F36D96E94D48B72AD2F266"
+			],
+			"duration": 0.016676999628543854,
+			"dateTime": "2026.10.22-11.59.37",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "RoundLifecycle",
+			"fullTestPath": "Arcade.Board.RoundLifecycle",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"D17A957E45F36D96E94D48B72AD2F266"
+			],
+			"duration": 0.018178496509790421,
+			"dateTime": "2026.10.22-11.59.38",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "VictoryAndCoordinates",
+			"fullTestPath": "Arcade.Board.VictoryAndCoordinates",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"D17A957E45F36D96E94D48B72AD2F266"
+			],
+			"duration": 0.017348099499940872,
+			"dateTime": "2026.10.22-11.59.38",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "BoardReceiverLifecycle",
+			"fullTestPath": "Arcade.Input.BoardReceiverLifecycle",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"D17A957E45F36D96E94D48B72AD2F266"
+			],
+			"duration": 0.045384597033262253,
+			"dateTime": "2026.10.22-11.59.38",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "Movement: P1=X=370.000 Y=0.000 Z=2.150 P2=X=0.000 Y=663.333 Z=2.150 Mode=1 Velocity=X=400.000 Y=0.000 Z=0.000",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-11.59.38"
+				}
+			],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "DPadAndStick",
+			"fullTestPath": "Arcade.Input.DPadAndStick",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"D17A957E45F36D96E94D48B72AD2F266"
+			],
+			"duration": 0.016378302127122879,
+			"dateTime": "2026.10.22-11.59.38",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "KeyboardMappings",
+			"fullTestPath": "Arcade.Input.KeyboardMappings",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"D17A957E45F36D96E94D48B72AD2F266"
+			],
+			"duration": 0.017263699322938919,
+			"dateTime": "2026.10.22-11.59.38",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "SeatIsolationAndReconnect",
+			"fullTestPath": "Arcade.Input.SeatIsolationAndReconnect",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"D17A957E45F36D96E94D48B72AD2F266"
+			],
+			"duration": 0.015939697623252869,
+			"dateTime": "2026.10.22-11.59.38",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "CameraAndView",
+			"fullTestPath": "Arcade.Minigame.CameraAndView",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"D17A957E45F36D96E94D48B72AD2F266"
+			],
+			"duration": 0.017585497349500656,
+			"dateTime": "2026.10.22-11.59.38",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "DynamicInstances",
+			"fullTestPath": "Arcade.Minigame.DynamicInstances",
+			"tags": [],
+			"state": "Fail",
+			"deviceInstance": [
+				"D17A957E45F36D96E94D48B72AD2F266"
+			],
+			"duration": 0.017366401851177216,
+			"dateTime": "2026.10.22-11.59.38",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "LogStreaming: FlushAsyncLoading(476,475): 2 QueuedPackages, 0 AsyncPackages",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-11.59.38"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogLevelStreaming: Failed to find a world in package '/Game/Jiashu/MiniGames/TestMiniGame_WalkToGoal/L_WalkToGoalMiniGame_LevelInstance_2'",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-11.59.38"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LogLevelStreaming: Failed to find a world in package '/Game/Jiashu/MiniGames/TestMiniGame_WalkToGoal/L_WalkToGoalMiniGame_LevelInstance_1'",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-11.59.38"
+				},
+				{
+					"event":
+					{
+						"type": "Error",
+						"message": "Expected 'First real map loaded' to be not null.",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "F:\\UnrealProject\\Beta-arcade-teamkfc\\Source\\BetaArcadeTeamkfc\\Private\\ArcadeInputTests.cpp",
+					"lineNumber": 381,
+					"timestamp": "2026.10.22-11.59.38"
+				},
+				{
+					"event":
+					{
+						"type": "Warning",
+						"message": "LoadErrors: Package '/Game/Jiashu/MiniGames/TestMiniGame_WalkToGoal/L_WalkToGoalMiniGame' has been saved with a newer engine version and can't be loaded. Current EngineVersion: 5.7.4-51494982+++UE5+Release-5.7 (Licensee=0). Package EngineVersion: 5.8.0-55116800+++UE5+Release-5.8 (Licensee=0)",
+						"context": "log",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-11.59.38"
+				}
+			],
+			"warnings": 3,
+			"errors": 1,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "SessionLifecycle",
+			"fullTestPath": "Arcade.Minigame.SessionLifecycle",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"D17A957E45F36D96E94D48B72AD2F266"
+			],
+			"duration": 0.017479401081800461,
+			"dateTime": "2026.10.22-11.59.38",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "StandaloneHost",
+			"fullTestPath": "Arcade.Minigame.StandaloneHost",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"D17A957E45F36D96E94D48B72AD2F266"
+			],
+			"duration": 0.017427001148462296,
+			"dateTime": "2026.10.22-11.59.38",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		}
+	]
+}

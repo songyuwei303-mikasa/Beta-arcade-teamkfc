@@ -1,0 +1,706 @@
+﻿{
+	"devices": [
+		{
+			"deviceName": "HUAWEIMATEBOOK9",
+			"instance": "A95F37F94B441A215632E9ABAC1FB725",
+			"instanceName": "HUAWEIMATEBOOK9-43832",
+			"platform": "WindowsEditor",
+			"oSVersion": "Windows 11 (25H2) [10.0.26200.9711] ",
+			"model": "Default",
+			"gPU": "Intel(R) UHD Graphics",
+			"cPUModel": "13th Gen Intel(R) Core(TM) i9-13980HX",
+			"rAMInGB": 32,
+			"renderMode": "SM6",
+			"rHI": "",
+			"appInstanceLog": ""
+		}
+	],
+	"reportCreatedOn": "2026.10.22-12.09.17",
+	"succeeded": 13,
+	"succeededWithWarnings": 0,
+	"failed": 0,
+	"notRun": 0,
+	"inProcess": 0,
+	"totalDuration": 0.40214541554450989,
+	"comparisonExported": false,
+	"comparisonExportDirectory": "",
+	"tests": [
+		{
+			"testDisplayName": "CellRecords",
+			"fullTestPath": "Arcade.Board.CellRecords",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"A95F37F94B441A215632E9ABAC1FB725"
+			],
+			"duration": 0.018329299986362457,
+			"dateTime": "2026.10.22-12.09.16",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "MapAudit",
+			"fullTestPath": "Arcade.Board.MapAudit",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"A95F37F94B441A215632E9ABAC1FB725"
+			],
+			"duration": 0.060146301984786987,
+			"dateTime": "2026.10.22-12.09.16",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "/Game/Jiashu/Levels/L_Main GameModeOverride=/Game/Jiashu/GameModeOverride/BP_ArcadeBoardGameMode.BP_ArcadeBoardGameMode_C",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  WorldSettings (WorldSettings)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  Brush_0 (Brush)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  SkyAtmosphere_0 (SkyAtmosphere)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  SkyLight_0 (SkyLight)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  DirectionalLight_0 (DirectionalLight)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  ExponentialHeightFog_0 (ExponentialHeightFog)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  VolumetricCloud_0 (VolumetricCloud)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  CameraActor_0 (CameraActor)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  PlayerStart_0 (PlayerStart)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  PlayerStart_1 (PlayerStart)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  StaticMeshActor_1 (StaticMeshActor)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  BP_MiniGameInstanceHost_C_1 (BP_MiniGameInstanceHost_C)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  BP_MiniGameInstanceHost_C_2 (BP_MiniGameInstanceHost_C)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  ArcadeBoardRound_1 (ArcadeBoardRound)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  BP_ArcadeBoardCell_C_1 (BP_ArcadeBoardCell_C)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  BP_ArcadeBoardCell_C_2 (BP_ArcadeBoardCell_C)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  BP_ArcadeBoardCell_C_3 (BP_ArcadeBoardCell_C)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  BP_ArcadeBoardCell_C_4 (BP_ArcadeBoardCell_C)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  BP_ArcadeBoardCell_C_5 (BP_ArcadeBoardCell_C)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  BP_ArcadeBoardCell_C_6 (BP_ArcadeBoardCell_C)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  BP_ArcadeBoardCell_C_7 (BP_ArcadeBoardCell_C)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  BP_ArcadeBoardCell_C_8 (BP_ArcadeBoardCell_C)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  BP_ArcadeBoardCell_C_9 (BP_ArcadeBoardCell_C)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  BP_ArcadeUIManager_C_1 (BP_ArcadeUIManager_C)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  DefaultPhysicsVolume_0 (DefaultPhysicsVolume)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  ChaosDebugDrawActor (Actor)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "/Game/Jiashu/Levels/L_TestingLevel GameModeOverride=/Script/BetaArcadeTeamkfc.ArcadeInputDemoGameMode",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  WorldSettings (WorldSettings)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  Brush_0 (Brush)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  DirectionalLight_0 (DirectionalLight)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  SkyLight_0 (SkyLight)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  SkyAtmosphere_0 (SkyAtmosphere)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  ExponentialHeightFog_0 (ExponentialHeightFog)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  VolumetricCloud_0 (VolumetricCloud)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  StaticMeshActor_0 (StaticMeshActor)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  PlayerStart_0 (PlayerStart)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  DefaultPhysicsVolume_0 (DefaultPhysicsVolume)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				},
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "  ChaosDebugDrawActor (Actor)",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				}
+			],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "PoolCoverage",
+			"fullTestPath": "Arcade.Board.PoolCoverage",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"A95F37F94B441A215632E9ABAC1FB725"
+			],
+			"duration": 0.016551800072193146,
+			"dateTime": "2026.10.22-12.09.16",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "RoundLifecycle",
+			"fullTestPath": "Arcade.Board.RoundLifecycle",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"A95F37F94B441A215632E9ABAC1FB725"
+			],
+			"duration": 0.020437102764844894,
+			"dateTime": "2026.10.22-12.09.16",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "VictoryAndCoordinates",
+			"fullTestPath": "Arcade.Board.VictoryAndCoordinates",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"A95F37F94B441A215632E9ABAC1FB725"
+			],
+			"duration": 0.019741799682378769,
+			"dateTime": "2026.10.22-12.09.16",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "BoardReceiverLifecycle",
+			"fullTestPath": "Arcade.Input.BoardReceiverLifecycle",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"A95F37F94B441A215632E9ABAC1FB725"
+			],
+			"duration": 0.041138797998428345,
+			"dateTime": "2026.10.22-12.09.16",
+			"entries": [
+				{
+					"event":
+					{
+						"type": "Info",
+						"message": "Movement: P1=X=370.000 Y=0.000 Z=2.150 P2=X=0.000 Y=663.333 Z=2.150 Mode=1 Velocity=X=400.000 Y=0.000 Z=0.000",
+						"context": "",
+						"artifact": "00000000000000000000000000000000"
+					},
+					"filename": "",
+					"lineNumber": -1,
+					"timestamp": "2026.10.22-12.09.16"
+				}
+			],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "DPadAndStick",
+			"fullTestPath": "Arcade.Input.DPadAndStick",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"A95F37F94B441A215632E9ABAC1FB725"
+			],
+			"duration": 0.016855198889970779,
+			"dateTime": "2026.10.22-12.09.16",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "KeyboardMappings",
+			"fullTestPath": "Arcade.Input.KeyboardMappings",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"A95F37F94B441A215632E9ABAC1FB725"
+			],
+			"duration": 0.01634419709444046,
+			"dateTime": "2026.10.22-12.09.16",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "SeatIsolationAndReconnect",
+			"fullTestPath": "Arcade.Input.SeatIsolationAndReconnect",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"A95F37F94B441A215632E9ABAC1FB725"
+			],
+			"duration": 0.016651101410388947,
+			"dateTime": "2026.10.22-12.09.16",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "CameraAndView",
+			"fullTestPath": "Arcade.Minigame.CameraAndView",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"A95F37F94B441A215632E9ABAC1FB725"
+			],
+			"duration": 0.021681398153305054,
+			"dateTime": "2026.10.22-12.09.16",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "DynamicInstances",
+			"fullTestPath": "Arcade.Minigame.DynamicInstances",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"A95F37F94B441A215632E9ABAC1FB725"
+			],
+			"duration": 0.11874720454216003,
+			"dateTime": "2026.10.22-12.09.16",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "SessionLifecycle",
+			"fullTestPath": "Arcade.Minigame.SessionLifecycle",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"A95F37F94B441A215632E9ABAC1FB725"
+			],
+			"duration": 0.01675570011138916,
+			"dateTime": "2026.10.22-12.09.17",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "StandaloneHost",
+			"fullTestPath": "Arcade.Minigame.StandaloneHost",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"A95F37F94B441A215632E9ABAC1FB725"
+			],
+			"duration": 0.018765497952699661,
+			"dateTime": "2026.10.22-12.09.17",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		}
+	]
+}

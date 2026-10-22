@@ -9,6 +9,7 @@
 #include <limits>
 #include "UObject/StrongObjectPtr.h"
 #include "ArcadeBoardCharacter.h"
+#include "ArcadeMenuWidget.h"
 #include "ArcadeBoardGameMode.h"
 #include "ArcadeInputSubsystem.h"
 #include "Engine/GameInstance.h"
@@ -138,7 +139,7 @@ public:
         if (Phase == 0)
         {
             Test->TestEqual(TEXT("Main map begins at menu"), Round->FlowState, EArcadeFlowState::MainMenu);
-            Test->TestNull(TEXT("Main menu does not route board input"), Input->GetInputReceiver(0));
+            Test->TestNotNull(TEXT("Main menu routes P1 input to menu"), Cast<UArcadeMenuWidget>(Input->GetInputReceiver(0)));
             if (!Test->TestTrue(TEXT("UI explicitly starts match"), Round->StartNewRound(45))) { Test->AddError(Round->LastError); return true; }
             Cell = Round->GetCellAt(1,1);
             Test->TestEqual(TEXT("Nine cells in actual main map"), Round->Cells.Num(), 9);
@@ -224,8 +225,8 @@ public:
         {
             Test->TestTrue(TEXT("Other game system-cancelled"), OtherRun.Get() && OtherRun->Result.Outcome == EArcadeMinigameOutcome::Cancelled);
             Test->TestFalse(TEXT("Cancellation cannot claim other cell"), Round->GetCellAt(2,2)->bHasRecord);
-            Test->TestNull(TEXT("Results gates P1 input"), Input->GetInputReceiver(0));
-            Test->TestNull(TEXT("Results gates P2 input"), Input->GetInputReceiver(1));
+            Test->TestNotNull(TEXT("Results routes P1 input to menu"), Cast<UArcadeMenuWidget>(Input->GetInputReceiver(0)));
+            Test->TestNotNull(TEXT("Results routes P2 input to menu"), Cast<UArcadeMenuWidget>(Input->GetInputReceiver(1)));
             Test->TestTrue(TEXT("Rematch from Results"), Round->StartNewRound(99));
             Test->TestEqual(TEXT("Rematch clears winner"), Round->WinnerSeat, INDEX_NONE);
             Test->TestFalse(TEXT("Rematch clears claims"), Round->GetCellAt(0,0)->bHasRecord);
@@ -240,7 +241,7 @@ public:
         }
         else if (Phase == 7 && Round->FlowState == EArcadeFlowState::MainMenu)
         {
-            Test->TestNull(TEXT("Menu input remains gated"), Input->GetInputReceiver(0));
+            Test->TestNotNull(TEXT("Returning to menu restores menu input"), Cast<UArcadeMenuWidget>(Input->GetInputReceiver(0)));
             Test->TestEqual(TEXT("Loading host fully cleaned"), H0->State, EArcadeInstanceState::Idle);
             return true;
         }

@@ -1,0 +1,17 @@
+{
+  "L_Main.map": {
+    "oldActorCount": 22,
+    "newActorCount": 22,
+    "differences": {}
+  },
+  "L_TestingLevel.map": {
+    "oldActorCount": 7,
+    "newActorCount": 7,
+    "differences": {}
+  },
+  "L_WalkToGoalMiniGame.map": {
+    "oldActorCount": 10,
+    "newActorCount": 10,
+    "differences": {}
+  }
+}
