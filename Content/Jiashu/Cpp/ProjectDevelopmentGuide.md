@@ -1,5 +1,7 @@
 # Beta Arcade：项目开发约定与交接
 
+**引擎迁移完成（2026-10-22）：** 本目录现在是 UE **5.7.4** 工程，EngineAssociation=5.7。原 15 个资源和 3 张地图已在 5.7 重建，玩法 C++ 保持一致；13 项编辑器测试和 4 项真实 GPU 运行测试全部通过、零测试警告。Windows 打包成功，打包程序另通过 4 项运行测试。原 5.8 工程保留在旧目录。打开方式、Git 分支、验证证据及人工验收范围见 [UE57Migration.md](UE57Migration.md)。
+
 **当前进展（2026-10-22，以此段为准）：** 公共对局循环已经接通。流程是 MainMenu → Playing → Ending → Results，见 [MatchFlow.md](MatchFlow.md)。L_Main 已有最简 UI：`WBP_MainMenu`、`WBP_Results`、`WBP_RootUI`、`BP_ArcadeUIManager`，可以开始新游戏和再来一局。胜利条件是同一席占满一行、一列或一条对角线。BeginPlay 不自动开局。`InitializeOnBeginPlay` 已废弃并忽略。小游戏中途仍不能主动退出。尚未做：选设备页、断连/暂停、跨局累计比分、更多小游戏、最终美术。下方写着“还没有菜单／还没做总胜负”的句子是更早的快照。
 
 **F/G 初版记录：** F/G 格子交互、单局池分配与独立纪录已接入 L_Main，见 [BoardCells.md](BoardCells.md)。九格和默认池已建立，两个宿主 Start Automatically 已关闭。用户已确认：仅成功完成可占格、平分保留原主、同格按完成顺序比较严格更优成绩。UE 完整构建、12 项编辑器测试和 1 项真实地图离屏运行测试通过；人工试玩与美术动画待验收。对局总胜负、疲劳伪随机和正式 UI 尚未实现。下文 A–E 历史记录保留，F/G 接口以 BoardCells.md 为准。
@@ -37,7 +39,7 @@
 
 ## 3. 当前工程与实现清单
 
-工程：`BetaArcadeTeamkfc.uproject`，EngineAssociation 为 5.8，本机编译验证使用 UE 5.8.3。运行模块为 `BetaArcadeTeamkfc`。
+工程：`BetaArcadeTeamkfc.uproject`，EngineAssociation 为 5.7，本机编译验证使用 UE 5.7.4。运行模块为 `BetaArcadeTeamkfc`。
 
 路径均以工程根目录为基准：
 

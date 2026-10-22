@@ -1,0 +1,180 @@
+[
+  {
+    "asset": "DA_DefaultPool",
+    "pins": 0,
+    "pin_differences": [],
+    "widget_properties": 0,
+    "widget_differences": []
+  },
+  {
+    "asset": "DA_WalkToGoal",
+    "pins": 0,
+    "pin_differences": [],
+    "widget_properties": 0,
+    "widget_differences": []
+  },
+  {
+    "asset": "BP_ArcadeBoardCharacter",
+    "pins": 36,
+    "pin_differences": [],
+    "widget_properties": 0,
+    "widget_differences": []
+  },
+  {
+    "asset": "BP_ArcadeBoardGameMode",
+    "pins": 6,
+    "pin_differences": [],
+    "widget_properties": 0,
+    "widget_differences": []
+  },
+  {
+    "asset": "BP_WTGCharacter",
+    "pins": 53,
+    "pin_differences": [
+      {
+        "path": [
+          "BP_WTGCharacter",
+          "EventGraph",
+          "K2Node_CallFunction_1",
+          "F37BDEF6427C2175FFDE328BB9A3345D"
+        ],
+        "reason": "missing",
+        "old": "CustomProperties Pin (PinId=F37BDEF6427C2175FFDE328BB9A3345D,PinName=\"self\",PinFriendlyName=NSLOCTEXT(\"K2Node\", \"Target\", \"Target\"),PinType.PinCategory=\"object\",PinType.PinSubCategory=\"\",PinType.PinSubCategoryObject=\"/Script/CoreUObject.Class'/Script/Engine.KismetMathLibrary'\",PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,DefaultObject=\"/Script/Engine.Default__KismetMathLibrary\",PersistentGuid=00000000000000000000000000000000,bHidden=True,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)"
+      },
+      {
+        "path": [
+          "BP_WTGCharacter",
+          "EventGraph",
+          "K2Node_CallFunction_1",
+          "4ACC475C46480FBCAB98FFB5AEC82E48"
+        ],
+        "reason": "missing",
+        "old": "CustomProperties Pin (PinId=4ACC475C46480FBCAB98FFB5AEC82E48,PinName=\"InVec\",PinType.PinCategory=\"struct\",PinType.PinSubCategory=\"\",PinType.PinSubCategoryObject=\"/Script/CoreUObject.ScriptStruct'/Script/CoreUObject.Vector2D'\",PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)"
+      },
+      {
+        "path": [
+          "BP_WTGCharacter",
+          "EventGraph",
+          "K2Node_CallFunction_1",
+          "C7B389C941642140BBDB57B17168C3DB"
+        ],
+        "reason": "missing",
+        "old": "CustomProperties Pin (PinId=C7B389C941642140BBDB57B17168C3DB,PinName=\"X\",Direction=\"EGPD_Output\",PinType.PinCategory=\"real\",PinType.PinSubCategory=\"double\",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)"
+      },
+      {
+        "path": [
+          "BP_WTGCharacter",
+          "EventGraph",
+          "K2Node_CallFunction_1",
+          "A5426A554E097E362E52BCA5CB87BDED"
+        ],
+        "reason": "missing",
+        "old": "CustomProperties Pin (PinId=A5426A554E097E362E52BCA5CB87BDED,PinName=\"Y\",Direction=\"EGPD_Output\",PinType.PinCategory=\"real\",PinType.PinSubCategory=\"double\",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)"
+      }
+    ],
+    "widget_properties": 0,
+    "widget_differences": []
+  },
+  {
+    "asset": "BP_WTGEntry",
+    "pins": 462,
+    "pin_differences": [
+      {
+        "path": [
+          "BP_WTGEntry",
+          "EventGraph",
+          "K2Node_PromotableOperator_0",
+          "8A4CE59B4EB00E5D635C318F599D162F"
+        ],
+        "reason": "missing",
+        "old": "CustomProperties Pin (PinId=8A4CE59B4EB00E5D635C318F599D162F,PinName=\"ErrorTolerance\",PinType.PinCategory=\"\",PinType.PinSubCategory=\"\",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,PersistentGuid=00000000000000000000000000000000,bHidden=True,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)"
+      },
+      {
+        "path": [
+          "BP_WTGEntry",
+          "EventGraph",
+          "K2Node_PromotableOperator_1",
+          "C2CF1450461C54907CD1FA8C1494E36D"
+        ],
+        "reason": "missing",
+        "old": "CustomProperties Pin (PinId=C2CF1450461C54907CD1FA8C1494E36D,PinName=\"ErrorTolerance\",PinType.PinCategory=\"\",PinType.PinSubCategory=\"\",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,PersistentGuid=00000000000000000000000000000000,bHidden=True,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)"
+      }
+    ],
+    "widget_properties": 0,
+    "widget_differences": []
+  },
+  {
+    "asset": "WBP_WTGTimer",
+    "pins": 33,
+    "pin_differences": [],
+    "widget_properties": 11,
+    "widget_differences": []
+  },
+  {
+    "asset": "BP_ArcadeBoardCell",
+    "pins": 36,
+    "pin_differences": [
+      {
+        "path": [
+          "BP_ArcadeBoardCell",
+          "EventGraph",
+          "K2Node_PromotableOperator_0",
+          "E75A242B4FAEC013FFB82984B380A541"
+        ],
+        "reason": "missing",
+        "old": "CustomProperties Pin (PinId=E75A242B4FAEC013FFB82984B380A541,PinName=\"ErrorTolerance\",PinType.PinCategory=\"\",PinType.PinSubCategory=\"\",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,PersistentGuid=00000000000000000000000000000000,bHidden=True,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)"
+      }
+    ],
+    "widget_properties": 0,
+    "widget_differences": []
+  },
+  {
+    "asset": "BP_ArcadeUIManager",
+    "pins": 243,
+    "pin_differences": [],
+    "widget_properties": 0,
+    "widget_differences": []
+  },
+  {
+    "asset": "BP_MiniGameInstanceHost",
+    "pins": 9,
+    "pin_differences": [],
+    "widget_properties": 0,
+    "widget_differences": []
+  },
+  {
+    "asset": "BP_Testing",
+    "pins": 9,
+    "pin_differences": [],
+    "widget_properties": 0,
+    "widget_differences": []
+  },
+  {
+    "asset": "WBP_MainMenu",
+    "pins": 33,
+    "pin_differences": [],
+    "widget_properties": 45,
+    "widget_differences": []
+  },
+  {
+    "asset": "WBP_MinigameFrame",
+    "pins": 9,
+    "pin_differences": [],
+    "widget_properties": 34,
+    "widget_differences": []
+  },
+  {
+    "asset": "WBP_Results",
+    "pins": 58,
+    "pin_differences": [],
+    "widget_properties": 46,
+    "widget_differences": []
+  },
+  {
+    "asset": "WBP_RootUI",
+    "pins": 27,
+    "pin_differences": [],
+    "widget_properties": 41,
+    "widget_differences": []
+  }
+]

@@ -1,0 +1,176 @@
+{
+  "engine": "5.7.4",
+  "date": "2026-10-22",
+  "gameplaySourceUnchanged": true,
+  "testChanges": [
+    "Added Arcade.UI.MenuRuntime",
+    "Updated 4 menu-input assertions in Arcade.Board.CellRuntime"
+  ],
+  "assets": 15,
+  "maps": 3,
+  "package": {
+    "platform": "Win64",
+    "configuration": "Development",
+    "result": "Success",
+    "exitCode": 0,
+    "cookedPackages": 485
+  },
+  "tests": [
+    {
+      "suite": "UE57_Final_Cells",
+      "succeeded": 1,
+      "succeededWithWarnings": 0,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "Arcade.Board.CellRuntime",
+          "state": "Success"
+        }
+      ]
+    },
+    {
+      "suite": "UE57_Final_Editor",
+      "succeeded": 13,
+      "succeededWithWarnings": 0,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "Arcade.Board.CellRecords",
+          "state": "Success"
+        },
+        {
+          "name": "Arcade.Board.MapAudit",
+          "state": "Success"
+        },
+        {
+          "name": "Arcade.Board.PoolCoverage",
+          "state": "Success"
+        },
+        {
+          "name": "Arcade.Board.RoundLifecycle",
+          "state": "Success"
+        },
+        {
+          "name": "Arcade.Board.VictoryAndCoordinates",
+          "state": "Success"
+        },
+        {
+          "name": "Arcade.Input.BoardReceiverLifecycle",
+          "state": "Success"
+        },
+        {
+          "name": "Arcade.Input.DPadAndStick",
+          "state": "Success"
+        },
+        {
+          "name": "Arcade.Input.KeyboardMappings",
+          "state": "Success"
+        },
+        {
+          "name": "Arcade.Input.SeatIsolationAndReconnect",
+          "state": "Success"
+        },
+        {
+          "name": "Arcade.Minigame.CameraAndView",
+          "state": "Success"
+        },
+        {
+          "name": "Arcade.Minigame.DynamicInstances",
+          "state": "Success"
+        },
+        {
+          "name": "Arcade.Minigame.SessionLifecycle",
+          "state": "Success"
+        },
+        {
+          "name": "Arcade.Minigame.StandaloneHost",
+          "state": "Success"
+        }
+      ]
+    },
+    {
+      "suite": "UE57_Final_Menu",
+      "succeeded": 1,
+      "succeededWithWarnings": 0,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "Arcade.UI.MenuRuntime",
+          "state": "Success"
+        }
+      ]
+    },
+    {
+      "suite": "UE57_Final_Presentation",
+      "succeeded": 1,
+      "succeededWithWarnings": 0,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "Arcade.Minigame.PresentationRuntime",
+          "state": "Success"
+        }
+      ]
+    },
+    {
+      "suite": "UE57_Final_Standalone",
+      "succeeded": 1,
+      "succeededWithWarnings": 0,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "Arcade.Minigame.StandalonePresentationRuntime",
+          "state": "Success"
+        }
+      ]
+    },
+    {
+      "suite": "UE57_Packaged_Cells",
+      "succeeded": 1,
+      "succeededWithWarnings": 0,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "Arcade.Board.CellRuntime",
+          "state": "Success"
+        }
+      ]
+    },
+    {
+      "suite": "UE57_Packaged_Menu",
+      "succeeded": 1,
+      "succeededWithWarnings": 0,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "Arcade.UI.MenuRuntime",
+          "state": "Success"
+        }
+      ]
+    },
+    {
+      "suite": "UE57_Packaged_Presentation",
+      "succeeded": 1,
+      "succeededWithWarnings": 0,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "Arcade.Minigame.PresentationRuntime",
+          "state": "Success"
+        }
+      ]
+    },
+    {
+      "suite": "UE57_Packaged_Standalone",
+      "succeeded": 1,
+      "succeededWithWarnings": 0,
+      "failed": 0,
+      "tests": [
+        {
+          "name": "Arcade.Minigame.StandalonePresentationRuntime",
+          "state": "Success"
+        }
+      ]
+    }
+  ]
+}
