@@ -1,10 +1,10 @@
 # Beta Arcade：项目开发约定与交接
 
-**当前进展（2026-10-21，以此段为准）：** 已追加菜单→对局→清理→结算流程与 Row/Column 三连胜利，见 [MatchFlow.md](MatchFlow.md)。BeginPlay 只搭建基础设施，UI 显式调用 StartNewRound；赢家锁定后系统停止其余挑战，等待卸载后允许再来一局/返回菜单。L_Main 九个用户蓝图格子的坐标已补齐，保留变色蓝图。当前还没有实际菜单 UI。下方 F/G 初版描述中“未做总胜负／自动开始对局”已被本段替代。
+**当前进展（2026-10-22，以此段为准）：** 公共对局循环已经接通。流程是 MainMenu → Playing → Ending → Results，见 [MatchFlow.md](MatchFlow.md)。L_Main 已有最简 UI：`WBP_MainMenu`、`WBP_Results`、`WBP_RootUI`、`BP_ArcadeUIManager`，可以开始新游戏和再来一局。胜利条件是同一席占满一行、一列或一条对角线。BeginPlay 不自动开局。`InitializeOnBeginPlay` 已废弃并忽略。小游戏中途仍不能主动退出。尚未做：选设备页、断连/暂停、跨局累计比分、更多小游戏、最终美术。下方写着“还没有菜单／还没做总胜负”的句子是更早的快照。
 
 **F/G 初版记录：** F/G 格子交互、单局池分配与独立纪录已接入 L_Main，见 [BoardCells.md](BoardCells.md)。九格和默认池已建立，两个宿主 Start Automatically 已关闭。用户已确认：仅成功完成可占格、平分保留原主、同格按完成顺序比较严格更优成绩。UE 完整构建、12 项编辑器测试和 1 项真实地图离屏运行测试通过；人工试玩与美术动画待验收。对局总胜负、疲劳伪随机和正式 UI 尚未实现。下文 A–E 历史记录保留，F/G 接口以 BoardCells.md 为准。
 
-**A–E 阶段记录（2026-10-20）：** A–E 公共小游戏链路已在源码中接通。用户已人工验收双人移动、B/C 独立样例，以及 L_Main 上的 D 双实例。E（`ArcadeMinigamePresentation` / `ArcadeMinigameView`）已有完整构建、9 项编辑器回归和 2 项真实渲染测试；自定义外框/动画与硬件游玩仍待用户验收。小游戏中途不能主动退出，Exit 不接 Cancel。**当时下一公共阶段是 F：棋盘格子触发开局（现已实现）**（关掉宿主的 Start Automatically，改为走到格子后确认）。尚未实现：格子交互与归属、对局胜负、正式选设备/断连 UI、3D 模型边框。专项文档： [MinigameSession.md](MinigameSession.md)、[DynamicMinigameInstances.md](DynamicMinigameInstances.md)、[MinigamePresentation.md](MinigamePresentation.md)。Sony DirectInput 仍禁止每秒 `EnumDevices`。
+**A–E 阶段记录（2026-10-20）：** A–E 公共小游戏链路已在源码中接通。用户已人工验收双人移动、B/C 独立样例，以及 L_Main 上的 D 双实例。E（`ArcadeMinigamePresentation` / `ArcadeMinigameView`）已有完整构建、9 项编辑器回归和 2 项真实渲染测试；自定义外框/动画与硬件游玩仍待用户验收。小游戏中途不能主动退出，Exit 不接 Cancel。**当时**下一阶段才是格子和胜负；这些现已实现，不要把本段的“尚未实现”当成现状。专项文档： [MinigameSession.md](MinigameSession.md)、[DynamicMinigameInstances.md](DynamicMinigameInstances.md)、[MinigamePresentation.md](MinigamePresentation.md)。Sony DirectInput 仍禁止每秒 `EnumDevices`。
 
 历史验证记录（不要当成“尚未开始”）：C 测试 GameMode 与七项自动化；D 八项自动化（`Saved/Automation/DynamicInstances`）；E 渲染测试见 MinigamePresentation.md。下文若与本段冲突，以本段为准。
 
@@ -14,7 +14,7 @@
 
 1. 阅读本文，再阅读 [InputSystem.md](InputSystem.md)。后者是现有输入系统的具体接入说明。棋盘移动见 [BoardMovement.md](BoardMovement.md)。
 2. 检查当前工作区、工程配置和源码。本文是交接快照；发现与代码不符时，明确指出差异，不要凭文档覆盖已有修改。
-3. 双席位连续移动已阶段完成（复用现有输入，无第二 LocalPlayer／Possess）。小游戏 A–E 已接入同一套会话生命周期；不要另造一套。F/G 已实现，接入说明见 BoardCells.md；不要回头重做测试 GameMode 或画中画。
+3. 双席位移动、小游戏 A–E、格子纪录和菜单/胜利流程都已接入，不要另造一套生命周期。格子见 BoardCells.md，开局与三连见 MatchFlow.md。
 4. 正式玩法不能继承测试 Controller 的自动创建测试面板行为，否则面板会把两名玩家的输入接收对象重新绑定到自己。
 5. 保留输入测试入口，确保新玩法开发后仍有独立的设备回归测试方式。运行中改 Seat／设备匹配的正式 UI 留到后续 UI 阶段。
 
@@ -24,7 +24,7 @@
 
 玩家在九宫格地图上移动，在所在格子按确认进入该格子的小游戏。小游戏是单人游戏，但两位玩家的挑战可以同时进行。结束后依据成绩决定格子归属；另一位玩家可以挑战同一格，按该小游戏规则比较高分或短耗时。
 
-本轮已确认平局／失败保留旧纪录、同格按完成顺序严格比较。对局总体胜利条件仍不能擅自补全。用户已确认类似胡闹厨房的自由连续移动与固定共享镜头。
+本轮已确认：平局保留原主、失败不占格、同格按完成顺序比较。对局胜利是三连（三行、三列、两条对角线）。满盘但没有三连时继续抢格，没有井字棋式平局。用户已确认类似胡闹厨房的自由连续移动与固定共享镜头。
 
 团队由用户担任主程序及部分设计，另两名设计专业组员可以用蓝图制作小游戏。分工方向：
 
@@ -68,7 +68,7 @@
 
 ### 尚未实现
 
-对局胜负、正式选设备／断连 UI（H）、最终外框美术和 3D 模型边框。成绩比较已实现，见 BoardCells.md。E 的自定义外框仍待用户看一眼。
+选设备／断连／暂停、跨局累计比分、更多小游戏内容、最终外框与场景美术。三连胜负和最简主菜单／结算 UI 已有，见 MatchFlow.md。
 
 早期曾讨论 Enhanced Input，但**当前实现没有创建 IA/IMC 资源，实际是 Slate 键盘预处理 + XInput + Sony DirectInput**。不要把设想误写成现状。若以后换设备后端，保持玩法侧接口和已确认的行为。
 
@@ -152,7 +152,7 @@ Windows XInput + 原生 Sony DirectInput 已实现。Sony 当前识别 DualShock
 
 首个验收目标：同一游戏窗口中，两位玩家独立移动；一人操作菜单时不控制另一人；取消／失焦不会留下持续移动；鼠标只操作 UI。
 
-## 7. 公共小游戏方案：A–E 已实现，下一阶段是格子入口
+## 7. 公共小游戏方案：对局循环已接通
 
 ### 7.0 下一阶段实施顺序（先做“门”，再做“屋子”）
 
@@ -167,14 +167,15 @@ Windows XInput + 原生 Sony DirectInput 已实现。Sony 当前识别 DualShock
 | **E** | 源码与自动化已完成；自定义外框待看 | SceneCapture → 每实例 RT → UMG。主屏保持棋盘相机。见 MinigamePresentation.md。 |
 | **F** | 已实现，见 BoardCells.md | 棋盘格子：走到格子、确认后对该席 `Start Minigame`。关掉集成用的 Start Automatically。 |
 | **G** | 已实现，规则见文首 | 收结果、严格比较成绩、更新格子归属。平局／失败保留纪录，同格按完成顺序结算。 |
-| **H** | 未做 | 正式 UI：选设备／Seat、菜单、断连提示。断连是否整局暂停仍未定案。 |
+| **对局流程** | 已实现，见 MatchFlow.md | 主菜单、开始／再来一局、三连胜利、返回菜单。最简 UMG 已接上。 |
+| **仍未做** | 内容与正式体验 | 选设备、断连暂停、跨局比分、更多小游戏、最终美术。 |
 
-依赖：输入 ✅ → 移动 ✅ → A ✅ → B/C ✅ → D ✅ → E 源码 ✅ → **F 格子开门** → G 归属 → H UI。组员现在可以按现有样例做新小游戏；正式对局循环还要等 F（以及规则定下来之后的 G）。
+依赖：输入 ✅ → 移动 ✅ → A–E ✅ → 格子与纪录 ✅ → 菜单／三连 ✅。公共系统可以先停在这里，下一步以内容和体验为主。
 
 **后续代理继续遵守：**
 
 1. 先读本文文首、§4、§5、§7.0 与对应专项文档。发现正文旧句写着“E 未实现／下一步做 B”时，以文首为准并改掉该句。
-2. 未获当次授权不要跳去做 G 的胜负规则或 H 的选设备 UI。
+2. 三连胜利已经实现。未获当次授权不要再改胜负规则，也不要另做一套菜单流程。
 3. 复用现有 Subsystem／Receiver／`RestoreBoardInput`；不引入第二 LocalPlayer，不默认双 Possess，不改回每秒 `EnumDevices`。
 4. 由 Session 接收输入再转发给入口；小游戏作者不自己 `SetInputReceiver`，不 `AddToViewport`，不 `SetViewTarget`。
 5. 新节点写入专项文档，并更新文首与「已实现／尚未实现」。

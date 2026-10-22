@@ -40,13 +40,11 @@ UI 的按钮点击调用上述入口。状态/格子事件用于更新显示，�
 
 小游戏中的 Exit 仍不接 Cancel，不自动弹菜单。暂停、断连整局暂停尚未实现。
 
-## 还没有 UI 时怎么试
+## 现有最简 UI
 
-当前默认 Play 后停在 MainMenu，所以角色不能移动，也不会立即分配游戏。这是新的正式行为。
+2026-10-22：用户已在 L_Main 接上最简界面，逻辑已跑通。资产包括 `Content/Jiashu/UI/WBP_MainMenu`、`WBP_Results`、`WBP_RootUI`，以及 `Content/Jiashu/SystemBlueprint/BP_ArcadeUIManager`。开始和再来一局都走 `Start New Round`，返回菜单走 `Return To Main Menu`。
 
-临时测试可以在 Level Blueprint：Event BeginPlay → Delay（例如 0.1 秒，等待 GameMode 完成角色创建）→ Get Actor Of Class(ArcadeBoardRound) → Start New Round，检查返回值/LastError。仅用于测试，做好开始按钮后删掉这条自动调用。不要在格子 BeginPlay 里开局，也不要重新打开宿主 Start Automatically。
-
-或者做一个最小 UMG 按钮，OnClicked 调用 StartNewRound，无需先完成整套菜单。
+默认 Play 仍先停在 MainMenu，角色不能移动。不要在 Level Blueprint 的 BeginPlay 里自动 Start New Round，也不要重新勾选宿主的 Start Automatically。若按钮返回 false，看 `Last Error`：常见原因是还在 Ending，或宿主还没卸载完。
 
 ## 坐标与胜利
 
@@ -74,6 +72,6 @@ OnRoundAssigned 每局都会发出，可在这里统一恢复中立外观、更�
 
 真实 L_Main 运行测试以抽象确认输入启动实际小游戏，模拟两条已存在的占领纪录后由第三次真实 Session 结果触发胜利，检查另一席取消、结果冻结、输入关闭、卸载后重开、加载时返回菜单。自动化不能代替玩家实际走到终点和硬件/焦点验收。
 
-测试报告和最终通过情况见本文件末尾。暂无 UI 资产、胜利动画、音效、跨局累计比分、暂停或存档功能。
+测试报告见本文件末尾。最简菜单和结算界面已有；胜利动画、音效、跨局累计比分、暂停和存档还没有。
 
 2026-10-21 最终验证：UE 5.8.3 Editor Development 完整构建成功。Saved/Automation/MatchFlow：13 项 Success；MatchFlowRuntime：1 项 Success；MatchFlowPresentation：1 项 Success。三个报告均 0 failed、0 succeededWithWarnings。实际 UI、玩家手动完成小游戏、硬件/焦点与打包仍待验收。

@@ -2,7 +2,7 @@
 
 # 九宫格交互、小游戏池与纪录（F/G）
 
-2026-10-21：本轮已实现并接入 L_Main。两名角色分别站进格子的 InteractionVolume 后按确认，复用已有 Host → Session → Entry → Presentation。成功完成后返回棋盘并比较该格纪录；没有玩家主动退出小游戏功能。对局总胜负与正式 UI 不在本次范围。
+2026-10-21：格子交互和单局纪录已接入。成功完成才比较纪录；小游戏里没有主动退出。三连胜利、主菜单和再来一局已另接，见 [MatchFlow.md](MatchFlow.md)。不要再按“Play 后立刻能走”来理解。
 
 ## 已接入的主地图
 
@@ -12,7 +12,7 @@
 - `/Game/Jiashu/Board/DA_DefaultPool`：目前只含上面的游戏。九格共享该池，因此本局九格相同，但纪录各自独立。
 - 示例布局间距 310 cm，交互 Box 半范围 (140,140,120)，中心位于地板上方。可在 Details 修改碰撞范围和格子位置；占位方块随父格移动。
 
-直接打开 L_Main Play（Number of Players=1）。未连手柄时 P1 用 WASD/Space，P2 用方向键/Enter。进入时确认键需松开后再操作小游戏；返回也保留输入中立保护。两人可以同时挑战同一格。
+打开 L_Main 后先停在主菜单，角色不能移动。从菜单开始对局后，P1 用 WASD/Space，P2 用方向键/Enter（未连手柄时）。进入小游戏和返回棋盘都要先松开按键。两人可以同时挑战同一格。
 
 ## 给蓝图作者的类
 
@@ -48,7 +48,7 @@
 
 一次正常流程：
 
-1. 关卡 BeginPlay 后，管理器 `Start New Round`。它先对每格 `Assign`：写入 `AssignedGame`，并把 `OwnerSeat=-1`、`HasRecord=false`、`BestValue=0`。然后才调用 **On Round Assigned**。这个事件里读到的已经是新局的空纪录。它**不会**再发 On Owner Changed。
+1. 地图加载只准备管理器和宿主，不调用 `Start New Round`。玩家从主菜单或结算界面成功开局后，管理器才对每格 `Assign`：写入 `AssignedGame`，并把 `OwnerSeat=-1`、`HasRecord=false`、`BestValue=0`。若该格上一局有主人，会先发 **On Owner Changed(原席位, -1)**，然后才发 **On Round Assigned**。从主菜单第一次开局时主人本来就是 -1，不会发这次清空事件。
 2. 角色在重叠区内按下确认，且 `Try Interact` 成功：先记下“这一席正在挑战这一格”，再请求宿主加载。加载请求接受后调用 **On Challenge Started(Seat)**。此时小游戏还在加载，正式计时还没开始。
 3. 小游戏会话结束（成功、失败或取消，且这次结果属于这一席当前挑战）时，管理器调用结算。结算函数先改字段，再发事件。外框关闭动画还可能继续播；输入恢复不依赖这两个蓝图事件。
 4. 加载失败、宿主丢失、还没有会话结果时，发 **On Challenge Error(Seat, Message)**，不改纪录。若会话已经先发出取消结果，走的是 On Challenge Resolved，不是这个错误事件。
@@ -76,11 +76,11 @@
 
 可以。按现在的实现，`OwnerSeat == -1` 和 `Has Record == false` 始终一起出现：只有建立或刷新纪录时才会把主人从 `-1` 改成 0 或 1，而且第一次只要是合法完成（Completed + Submitted，成绩是有限数）就会占格，不管分数多差，包括 0 和负数。本局之后不会自动变回无人。
 
-不要把它理解成“只要打完一次就占格”。失败、取消、无穷大成绩、加载失败都不会占格，`OwnerSeat` 保持 `-1`。新的一局开始时会重新变成 `-1`，那是清局，不是丢纪录动画；清局只发 On Round Assigned。
+不要把它理解成“只要打完一次就占格”。失败、取消、无穷大成绩、加载失败都不会占格，`OwnerSeat` 保持 `-1`。新的一局会把它重置为 `-1`。上一局有主人的格子会先收到 On Owner Changed(原席位, -1)，再收到 On Round Assigned。
 
 更直接的节点仍是 **Has Record**。`OwnerSeat == -1` 在当前规则下和它等价，用来做“无人占领”的外观是合适的。
 
-新局清空外观用 OnRoundAssigned；不会逐格额外发送 OwnerChanged(-1)。动画只负责显示，不需回调 C++ 才能更新归属，也不会暂停另一位玩家。用管理器 `Get Challenged Cell(Seat)` 查询该席当前挑战，避免用一个 bool 表示两席同时挑战。
+再来一局时，用 On Owner Changed 的新席位 `-1` 恢复中立颜色，不要把“不是 0”都当成 P2。On Round Assigned 仍适合刷新游戏名称。动画只负责显示。用管理器 `Get Challenged Cell(Seat)` 查询该席当前挑战。
 
 原生角色已经消费 Confirm 的按下沿并挑选相交格子中最近的一个；等距按 Actor 路径稳定选择。成功开局后不会再转发同一次按下给 OnBoardButton。没有成功开始时继续交给原有事件；松开和 Exit 继续转发。若蓝图覆盖原始 ArcadeButton 接口，必须调用父类实现。没有额外读取物理键或创建 LocalPlayer。
 
@@ -106,14 +106,14 @@ Content Browser → Miscellaneous → Data Asset → 选择 **ArcadeMinigameDefi
 
 关卡放 **一个 ArcadeBoardRound**；Cells 留空时 BeginPlay 自动收集本关卡格子，或显式填写参与列表。读取已有两个宿主（按 Seat），没有时自动生成。重复管理器或重复席位宿主视为配置错误，查看 LastError；宿主的实例偏移和自定义画中画配置继续由宿主负责。
 
-`Initialize On Begin Play` 默认开启，只分配本局游戏，不开小游戏。`Start New Round(Seed)` 用于后续正式对局流程：两席宿主均 Idle 且无挑战时才允许。Seed=-1 随机，固定种子可复现；RoundSeed 保存本次种子。不支持在挑战中途强制重开。
+`Initialize On Begin Play` 已废弃，加载地图不会开局。只有主菜单或结算状态，并且两个宿主都空闲时，`Start New Round` 才会成功。传入 Seed=-1 时使用 InitialSeed；InitialSeed 也是 -1 才随机。对局进行中不能直接重开，要先回到结算或调用 `Return To Main Menu`。固定种子在九格坐标不变时可复现。分配顺序按 Row/Column，不再按 Actor 名字。
 
 同池 K 款不同游戏、N 个格子：
 
 - K >= N：打乱后无放回选 N 款。
 - K < N：先放入全部 K 款，剩余位置均匀随机补齐，再打乱格子分配。
 
-所有池先验证，失败保留上一局全部分配和纪录；成功才统一提交并发送 OnRoundAssigned、OnRoundStarted。管理器初次启动按 Actor 路径排序，同地图和同池顺序下固定种子可复现。
+开局前会检查恰好九格、坐标 0..2 各一次、池不为空。失败保留上一局。成功后先重置纪录，有旧主人的格子发 On Owner Changed(原席位, -1)，再发 On Round Assigned 和 On Round Started。
 
 目前只做普通随机。未来疲劳/能力轮换可从 `UArcadeMinigamePool::Allocate` 的集中分配入口扩展，利用 ChallengeTags 与玩家历史，必须保留覆盖约束。不要在每次挑战结束后重抽当前格子，否则会破坏单局抢纪录的公平性。
 

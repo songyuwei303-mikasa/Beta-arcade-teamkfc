@@ -83,7 +83,7 @@ Start Automatically 在首个 Tick 执行，确保 Board GameMode 已建立输�
 
 ## 下一阶段
 
-E 已实现，说明见 [MinigamePresentation.md](MinigamePresentation.md)。再往后是 F：用格子上的确认调用 `Start Minigame`，并关掉这里用于集成测试的 Start Automatically。
+E、格子入口、三连胜利和最简菜单都已实现。正式对局不要勾选 Start Automatically。
 
 这次没有修改任何 .umap 或 .uasset；上述宿主摆放和小游戏调试 Level Blueprint 清理由用户在编辑器完成。
 

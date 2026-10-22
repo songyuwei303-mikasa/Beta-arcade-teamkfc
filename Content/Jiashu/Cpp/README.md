@@ -11,11 +11,12 @@ E 已完成完整构建、9 项编辑器回归及 2 项真实渲染测试，均�
 5. [FirstMinigameTutorial.md](FirstMinigameTutorial.md)：从创建蓝图开始，制作“走到终点并确认”的计时样例；包含 C 测试 GameMode 配置和 UI 接线。
 6. [DynamicMinigameInstances.md](DynamicMinigameInstances.md)：D 动态实例宿主、L_Main 编辑器配置、双实例验证和当前显示边界。
 7. [MinigamePresentation.md](MinigamePresentation.md)：E 画中画、角色内相机、Widget 外框设计、嵌套 UI 与开关动画。
-8. [BoardCells.md](BoardCells.md)：F/G 格子字段、事件顺序、纪录比较。做格子蓝图时先读其中的 ArcadeBoardCell 说明。
+8. [BoardCells.md](BoardCells.md)：格子字段、事件顺序、纪录比较。做格子蓝图时先读其中的 ArcadeBoardCell 说明。
+9. [MatchFlow.md](MatchFlow.md)：主菜单、开始／再来一局、三连胜利和结算。流程以这篇为准。
 
 此目录用于存放公共系统的接入说明与设计侧参考文档。Unreal 实际编译的 `.h` / `.cpp` 源码位于工程的 `Source/BetaArcadeTeamkfc` 模块中，不能放在 Content 下参与编译。
 
-当前已实现：输入、双人移动、小游戏 A–E，以及 F/G 格子交互与单局纪录，见 BoardCells.md。正式总胜负 UI、选设备和最终外框美术尚未实现。小游戏中途不能主动退出，Exit 不接 Cancel。
+当前已实现：输入、双人移动、小游戏 A–E、格子纪录、三连胜利，以及最简主菜单和结算 UI。见 BoardCells.md 与 MatchFlow.md。选设备、断连暂停、跨局比分和最终美术尚未实现。小游戏中途不能主动退出，Exit 不接 Cancel。
 
 2026-10-21：新增 [九宫格交互、小游戏池与纪录](BoardCells.md)。L_Main 已接入，正式流程不再使用 Start Automatically。
 

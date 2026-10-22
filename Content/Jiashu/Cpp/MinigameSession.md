@@ -74,7 +74,7 @@ On Stopped 停止玩法；On Cleanup 清除自己的 TimerHandle、事件绑定�
 
 ## 从现在到团队开发的里程碑
 
-A–E 的公共链路已经接通，B 样例和 D 双实例已由用户试过。组员可以按现有样例做新小游戏。下一公共阶段是 F 格子入口，然后才是 G 归属和 H 正式 UI。集成测试用的 Start Automatically 在正式格子接入后应关掉。
+A–E、格子纪录、三连胜利和最简菜单都已接通。组员可以按现有样例做新小游戏。不要再打开宿主的 Start Automatically。
 
 ## 验证记录
 
