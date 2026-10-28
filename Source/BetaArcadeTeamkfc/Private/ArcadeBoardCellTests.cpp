@@ -53,6 +53,7 @@ bool FArcadeCellRecordTest::RunTest(const FString&)
     auto* A = World->SpawnActor<AArcadeBoardCell>();
     auto* B = World->SpawnActor<AArcadeBoardCell>();
     auto* Game = NewObject<UArcadeMinigameDefinition>();
+    Game->MinimumScore = -100;
     FArcadeBoardCellTestAccess::Assign(A, Game);
     FArcadeBoardCellTestAccess::Assign(B, Game);
     FArcadeMinigameResult Result;
@@ -76,6 +77,7 @@ bool FArcadeCellRecordTest::RunTest(const FString&)
     FArcadeBoardCellTestAccess::Resolve(A, Result);
     TestEqual(TEXT("Nonfinite result rejected"), A->BestValue, -4.0);
     Game->Metric = EArcadeRecordMetric::ElapsedSeconds; Game->Direction = EArcadeRecordDirection::LowerWins;
+    Game->MinimumScore = -100;
     FArcadeBoardCellTestAccess::Assign(A, Game);
     TestFalse(TEXT("New round clears record"), A->bHasRecord);
     Game->Direction = EArcadeRecordDirection::HigherWins; // editing asset cannot change active round
@@ -85,6 +87,17 @@ bool FArcadeCellRecordTest::RunTest(const FString&)
     FArcadeBoardCellTestAccess::Resolve(A, Result);
     TestEqual(TEXT("Elapsed metric and snapshotted lower-wins rule"), A->OwnerSeat, 1);
     TestEqual(TEXT("Elapsed stored"), A->BestValue, 8.0);
+    Game->Metric = EArcadeRecordMetric::Score; Game->MinimumScore = 10; Game->MaxCompletionSeconds = 5;
+    FArcadeBoardCellTestAccess::Assign(B, Game);
+    Result.Score = 9; Result.ElapsedSeconds = 4;
+    FArcadeBoardCellTestAccess::Resolve(B, Result);
+    TestFalse(TEXT("Below minimum cannot claim empty cell"), B->bHasRecord);
+    Result.Score = 10; Result.ElapsedSeconds = 6;
+    FArcadeBoardCellTestAccess::Resolve(B, Result);
+    TestFalse(TEXT("Late success cannot claim empty cell"), B->bHasRecord);
+    Result.ElapsedSeconds = 5;
+    FArcadeBoardCellTestAccess::Resolve(B, Result);
+    TestTrue(TEXT("Exact thresholds qualify"), B->bHasRecord);
     GEngine->DestroyWorldContext(World); World->DestroyWorld(false);
     return true;
 }
@@ -263,6 +276,7 @@ bool FArcadeBoardRuntimeTest::RunTest(const FString&)
 }
 struct FArcadeFlowTestAccess
 {
+    static void Challenge(AArcadeBoardRound* Round, int32 Seat, AArcadeBoardCell* Cell) { Round->PendingCells[Seat] = Cell; }
     static bool Win(AArcadeBoardRound* Round) { return Round->EvaluateVictory(); }
 };
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FArcadeVictoryTest, "Arcade.Board.VictoryAndCoordinates", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
@@ -285,6 +299,10 @@ bool FArcadeVictoryTest::RunTest(const FString&)
         {
             TestTrue(TEXT("Explicit match start"), Round->StartNewRound(7));
             for (int32 Index : Line) Round->GetCellAt(Index / 3, Index % 3)->OwnerSeat = Seat;
+            FArcadeFlowTestAccess::Challenge(Round, 1-Seat, Round->GetCellAt(Line[0]/3,Line[0]%3));
+            TestFalse(TEXT("Contested winning line waits"), FArcadeFlowTestAccess::Win(Round));
+            TestEqual(TEXT("Waiting leaves match running"), Round->FlowState, EArcadeFlowState::Playing);
+            FArcadeFlowTestAccess::Challenge(Round, 1-Seat, nullptr);
             TestTrue(TEXT("Each horizontal/vertical/diagonal wins"), FArcadeFlowTestAccess::Win(Round));
             TestEqual(TEXT("Correct seat wins"), Round->WinnerSeat, Seat);
             TestFalse(TEXT("No duplicate win after state frozen"), FArcadeFlowTestAccess::Win(Round));
@@ -292,6 +310,22 @@ bool FArcadeVictoryTest::RunTest(const FString&)
             TestEqual(TEXT("Cleanup completes in Results"), Round->FlowState, EArcadeFlowState::Results);
         }
     TestTrue(TEXT("New match"), Round->StartNewRound());
+    // B takes the contested corner, breaking A's row and completing B's column.
+    Round->GetCellAt(0,0)->OwnerSeat = 0; Round->GetCellAt(0,1)->OwnerSeat = 0; Round->GetCellAt(0,2)->OwnerSeat = 0;
+    Round->GetCellAt(1,2)->OwnerSeat = 1; Round->GetCellAt(2,2)->OwnerSeat = 1;
+    FArcadeFlowTestAccess::Challenge(Round, 1, Round->GetCellAt(0,2));
+    TestFalse(TEXT("A waits for B's corner attempt"), FArcadeFlowTestAccess::Win(Round));
+    FArcadeMinigameResult Capture;
+    Capture.Seat = 1; Capture.Outcome = EArcadeMinigameOutcome::Completed; Capture.Reason = EArcadeMinigameEndReason::Submitted; Capture.Score = 10;
+    FArcadeBoardCellTestAccess::Resolve(Round->GetCellAt(0,2), Capture);
+    FArcadeFlowTestAccess::Challenge(Round, 1, nullptr);
+    FArcadeFlowTestAccess::Challenge(Round, 0, Round->GetCellAt(1,2));
+    TestFalse(TEXT("B's new line also waits for A"), FArcadeFlowTestAccess::Win(Round));
+    FArcadeFlowTestAccess::Challenge(Round, 0, nullptr);
+    TestTrue(TEXT("B wins after A's attempt ends without capture"), FArcadeFlowTestAccess::Win(Round));
+    TestEqual(TEXT("Original candidate A is not cached"), Round->WinnerSeat, 1);
+    Round->Tick(0);
+    TestTrue(TEXT("Reset after reversal"), Round->StartNewRound());
     const int32 FullNoWin[9] = {0,1,0,0,1,1,1,0,0};
     for (int32 I = 0; I < 9; ++I) Round->GetCellAt(I/3,I%3)->OwnerSeat = FullNoWin[I];
     TestFalse(TEXT("Full board still permits stealing, no automatic draw"), FArcadeFlowTestAccess::Win(Round));
@@ -307,6 +341,8 @@ bool FArcadeVictoryTest::RunTest(const FString&)
     return true;
 }
 #endif
+
+
 
 
 

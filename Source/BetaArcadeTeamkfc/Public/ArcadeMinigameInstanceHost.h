@@ -20,6 +20,8 @@ class BETAARCADETEAMKFC_API AArcadeMinigameInstanceHost : public AActor, public 
     GENERATED_BODY()
 public:
     AArcadeMinigameInstanceHost();
+    /** Per-challenge deadline supplied by board configuration. Zero disables. */
+    double CompletionTimeLimitSeconds = 0;
     /** Native flow teardown, including Loading/Closing. Not a player Exit action. */
     void StopForMatchEnd();
     virtual void Tick(float DeltaSeconds) override;
@@ -65,4 +67,5 @@ private:
     void BeginUnload();
     void RestoreInput();
 };
+
 

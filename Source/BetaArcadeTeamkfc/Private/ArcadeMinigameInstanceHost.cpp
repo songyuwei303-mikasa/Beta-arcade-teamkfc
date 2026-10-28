@@ -131,6 +131,8 @@ void AArcadeMinigameInstanceHost::Tick(float DeltaSeconds)
     if (State == EArcadeInstanceState::Preparing || State == EArcadeInstanceState::Running)
     {
         if (!ActiveRun) { Fail(TEXT("Missing session.")); return; }
+        if (ActiveRun->State == EArcadeMinigameState::Running && CompletionTimeLimitSeconds > 0 &&
+            ActiveRun->GetElapsedSeconds() > CompletionTimeLimitSeconds) ActiveRun->Finish(0, false);
         if (ActiveRun->State == EArcadeMinigameState::Ended)
         {
             if (IsValid(Presentation))
@@ -221,3 +223,4 @@ void AArcadeMinigameInstanceHost::StopForMatchEnd()
     bStartAutomatically = false;
     BeginUnload();
 }
+

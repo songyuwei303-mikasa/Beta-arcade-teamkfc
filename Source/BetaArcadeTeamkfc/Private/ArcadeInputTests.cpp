@@ -433,7 +433,10 @@ bool FArcadeInstanceTest::RunTest(const FString&)
             Host0->Destroy();
             TestTrue(TEXT("Destroy while loading returns input"), Input->GetInputReceiver(0) == Board0);
             Input->SetInputReceiver(1, Board0); // A later menu-like receiver owns the seat.
-            Host1->ActiveRun->Finish(7);
+            Host1->CompletionTimeLimitSeconds = 0.01;
+            World->Tick(LEVELTICK_All, 0.1f);
+            Host1->Tick(0);
+            TestEqual(TEXT("Deadline ends unfinished run as failure"), Host1->ActiveRun->Result.Outcome, EArcadeMinigameOutcome::Failed);
             Host1->Tick(0);
             TestTrue(TEXT("Later receiver preserved"), Input->GetInputReceiver(1) == Board0);
             World->FlushLevelStreaming();
@@ -463,3 +466,4 @@ bool FArcadeMapAuditTest::RunTest(const FString&)
     return true;
 }
 #endif
+

@@ -171,6 +171,10 @@ bool AArcadeBoardRound::EvaluateVictory()
         const int32 Seat = A->OwnerSeat;
         if (Seat >= 0 && Seat < 2 && B->OwnerSeat == Seat && C->OwnerSeat == Seat)
         {
+            // Loading/preparing/running reservations all count as the opponent's last chance.
+            // Completed sessions have already released their reservation before this check.
+            const auto* Contested = GetChallengedCell(1 - Seat);
+            if (Contested && (Contested == A || Contested == B || Contested == C)) continue;
             WinnerSeat = Seat;
             WinningCells = {A, B, C};
             BeginFinish(EArcadeFlowState::Results);
@@ -194,6 +198,7 @@ bool AArcadeBoardRound::TryStartChallenge(AArcadeBoardCell* Cell, AArcadeBoardCh
     TGuardValue<bool> Guard(bMutating, true);
     PendingCells[Seat] = Cell;
     Instance->MinigameMap = Cell->RoundMap;
+    Instance->CompletionTimeLimitSeconds = Cell->MaxCompletionSeconds;
     if (!Instance->StartMinigame()) { PendingCells[Seat] = nullptr; return false; }
     Cell->OnChallengeStarted(Seat);
     return true;
@@ -206,7 +211,8 @@ void AArcadeBoardRound::HandleEnded(FArcadeMinigameResult Result)
     if (!IsValid(Instance) || !Instance->ActiveRun || Instance->ActiveRun->SessionId != Result.SessionId) return;
     auto* Cell = GetChallengedCell(Result.Seat);
     PendingCells[Result.Seat] = nullptr; // clear before Blueprint callbacks; duplicate notifications are harmless
-    if (IsValid(Cell)) { Cell->Resolve(Result); EvaluateVictory(); }
+    if (IsValid(Cell)) Cell->Resolve(Result);
+    EvaluateVictory();
 }
 void AArcadeBoardRound::HandleError0(FString Message) { HandleError(0, Message); }
 void AArcadeBoardRound::HandleError1(FString Message) { HandleError(1, Message); }
@@ -215,6 +221,8 @@ void AArcadeBoardRound::HandleError(int32 Seat, const FString& Message)
     auto* Cell = GetChallengedCell(Seat);
     PendingCells[Seat] = nullptr;
     LastError = Message;
+    TGuardValue<bool> Guard(bMutating, true);
+    EvaluateVictory();
     if (IsValid(Cell)) Cell->OnChallengeError(Seat, Message);
 }
 void AArcadeBoardRound::Tick(float DeltaSeconds)
@@ -252,6 +260,8 @@ void AArcadeBoardRound::EndPlay(const EEndPlayReason::Type Reason)
     PendingCells.Init(nullptr, 2);
     Super::EndPlay(Reason);
 }
+
+
 
 
 

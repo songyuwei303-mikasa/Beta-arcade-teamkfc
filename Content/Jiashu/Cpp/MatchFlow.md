@@ -75,3 +75,13 @@ OnRoundAssigned 每局都会发出，可在这里统一恢复中立外观、更�
 测试报告见本文件末尾。最简菜单和结算界面已有；胜利动画、音效、跨局累计比分、暂停和存档还没有。
 
 2026-10-21 最终验证：UE 5.8.3 Editor Development 完整构建成功。Saved/Automation/MatchFlow：13 项 Success；MatchFlowRuntime：1 项 Success；MatchFlowPresentation：1 项 Success。三个报告均 0 failed、0 succeededWithWarnings。实际 UI、玩家手动完成小游戏、硬件/焦点与打包仍待验收。
+
+## 2026-10-28：最后挑战机会与成绩门槛（UE 5.7）
+
+当前主要工程：F:\UnrealProject\BetaArcadeTeamKFC_UE57\BetaArcadeTeamkfc。
+三连逐条判断：对手正在挑战该线任意一格时暂缓该线，保持 Playing，双方仍可操作；另一条未被挑战的三连仍可直接获胜。Loading/Preparing 也算已接受的挑战，结算后 Closing/Unloading 不算。挑战结果先更新归属，再重新检查双方全部三连；失败、取消、加载失败或宿主被移除也会释放等待并重查。不缓存旧赢家，因此抢格破坏三连后旧胜利无效。UI 不会提前收到 OnMatchFinished。
+
+Definition 新增 MinimumScore（Score 指标的下限，默认0，等于下限合格；若零分不能占格，设为1或合适的正数）与 MaxCompletionSeconds（所有指标的完成时限，默认0不限时）。超过时限仍未完成时宿主自动 Finish(0,false)，返回棋盘并触发重新判胜。迟到的成功提交也被格子门槛拒绝。ElapsedSeconds 模式不应用得分下限，使用完成时限约束。两项均在开局快照，修改资产下一局生效。
+这不会数学上保证必然结束：不设置时限的小游戏仍可能永不提交，玩家也可能不再发起挑战。建议为每个游戏配置合理时限。
+
+2026-10-28 验证：UE5.7 Editor Development 完整构建通过；Saved/Automation/LastChance/index.json 中 13 项编辑器自动化全部成功。新增断言覆盖双方八条三连的等待、抢格反转及再次等待、最低分与时限边界、真实宿主超时自动失败。此次未执行真人硬件试玩或离屏渲染测试。
