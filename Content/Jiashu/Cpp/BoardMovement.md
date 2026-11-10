@@ -143,3 +143,18 @@
 修复：改为按需扫描（见 `ArcadeSonyInput.cpp` / InputSystem.md）。验收：持续移动 30 秒以上应不再出现约 1Hz 的规律卡顿；PIE 控制台可用 `stat hitch`／`stat unit` 对照。新插入的 PS 手柄需 Reassign／`AutoAssignSeats` 后才会进入来源列表。
 
 2026-10-21 更新：Confirm 按下现在优先尝试所在格子的小游戏交互，成功后消费该按下；未成功才继续 OnBoardButton。详见 [BoardCells.md](BoardCells.md)。覆盖原始接口仍须调用父类。
+
+## 2026-11-09 主场景画中画避让镜头
+
+正式 AArcadeBoardGameMode 记录开局主相机位置及相机组件 RightVector，并按实际可见的非全屏小游戏窗口平滑移动。P1/Seat0 左窗单独可见时向左移动；P2/Seat1 右窗单独可见时向右移动；两个或零个窗口可见时回中。打开及关闭动画期间按窗口仍存在处理，加载期间尚无窗口时不偏移；独立小游戏全屏预览不参与。
+
+在 L_Main 使用的 BP_ArcadeBoardGameMode 的 Class Defaults → Arcade → Board → Camera Pan 调整：
+- Enable Minigame Camera Pan：启用，默认 true，关闭后平滑回中。
+- Minigame Camera Pan Distance：世界厘米，默认 550。按棋盘大小及窗口尺寸调节；并非自动测量棋盘边界。
+- Minigame Camera Pan Speed：指数平滑响应率，默认 4，约 0.75 秒走完 95%；越大越快，0 为立即到位。
+
+只平移主相机，不修改旋转、FOV、角色移动方向或小游戏摄像机。不需要改地图/Widget；既支持 ArcadeBoardCamera 标记相机，也支持默认生成相机。不要同时让其他蓝图驱动同一主相机的位置。窗口左右位置按当前公共 UI 的 Seat0/Seat1 约定；未来若交换窗口布局需同步此约定。
+
+新增自动化 Arcade.Board.CameraPan 验证左右方向、双/零窗口回中、平滑不越界、帧率独立及关闭功能回中；真实棋盘构图仍需 PIE 调参验收。
+
+验证完成（2026-11-09）：UE5.7 Editor Development 完整构建成功；Arcade.Board.CameraPan 自动化测试通过，0 警告/0 错误。报告位于旧工作目录 Saved/CameraPan/Report/index.json。未代替人工 PIE 棋盘构图验收。
