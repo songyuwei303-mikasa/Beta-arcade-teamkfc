@@ -158,3 +158,9 @@
 新增自动化 Arcade.Board.CameraPan 验证左右方向、双/零窗口回中、平滑不越界、帧率独立及关闭功能回中；真实棋盘构图仍需 PIE 调参验收。
 
 验证完成（2026-11-09）：UE5.7 Editor Development 完整构建成功；Arcade.Board.CameraPan 自动化测试通过，0 警告/0 错误。报告位于旧工作目录 Saved/CameraPan/Report/index.json。未代替人工 PIE 棋盘构图验收。
+
+## 2026-11-11 长按确认进入小游戏
+BoardCharacter 消耗 Confirm，按下时选择所在最近格子，持续按住 ConfirmHoldSeconds（默认 1 秒）后仅尝试一次 TryInteract。松开、离开原格子或输入取消/切换会清空进度；需重新松开再按。格子有效性及对局规则仍由 TryInteract 最终判定。参数在角色蓝图 Class Defaults → Arcade → Board → Hold Interaction。
+蓝图事件 OnConfirmHoldProgressChanged(Progress 0..1, bActive) 用于显示/隐藏 WidgetComponent 并更新材质；也可通过 GetConfirmHoldProgress / IsHoldingConfirm 查询。不要再在 OnBoardButton 中实现 Confirm 单击进入。
+WBP_PercentageRing 当前仅支持 Sickness/Color 与 EnsureCircleMaterial，需为新进度环复制独立 UI 材质并增加 Progress 遮罩，避免改动吹泡泡游戏材质。角色 WidgetComponent 使用 Screen 空间可保证始终正对屏幕。
+验证：UE5.7 Editor Development 完整构建成功；长按交互及 UI 需在 PIE 验收（短按、松开、离开格子、完成后持续按住、双席位分别长按）。本次未宣称运行时自动化通过。
