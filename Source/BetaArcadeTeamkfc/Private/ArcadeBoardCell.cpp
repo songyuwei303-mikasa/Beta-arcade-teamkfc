@@ -30,6 +30,8 @@ void AArcadeBoardCell::Assign(AArcadeBoardRound* Manager, UArcadeMinigameDefinit
     RoundMap = Game->Map;
     Metric = Game->Metric;
     Direction = Game->Direction;
+    MinimumScore = Game->MinimumScore;
+    MaxCompletionSeconds = Game->MaxCompletionSeconds;
     OwnerSeat = INDEX_NONE;
     bHasRecord = false;
     BestValue = 0;
@@ -37,7 +39,11 @@ void AArcadeBoardCell::Assign(AArcadeBoardRound* Manager, UArcadeMinigameDefinit
 void AArcadeBoardCell::Resolve(const FArcadeMinigameResult& Result)
 {
     const double Value = Metric == EArcadeRecordMetric::Score ? Result.Score : Result.ElapsedSeconds;
-    const bool bBetter = Result.Seat >= 0 && Result.Seat < 2 && Result.Outcome == EArcadeMinigameOutcome::Completed &&
+    const bool bQualified = FMath::IsFinite(MinimumScore) && FMath::IsFinite(MaxCompletionSeconds) && MaxCompletionSeconds >= 0 &&
+        (Metric != EArcadeRecordMetric::Score || Result.Score >= MinimumScore) &&
+        FMath::IsFinite(Result.ElapsedSeconds) && Result.ElapsedSeconds >= 0 &&
+        (MaxCompletionSeconds == 0 || Result.ElapsedSeconds <= MaxCompletionSeconds);
+    const bool bBetter = bQualified && Result.Seat >= 0 && Result.Seat < 2 && Result.Outcome == EArcadeMinigameOutcome::Completed &&
         Result.Reason == EArcadeMinigameEndReason::Submitted && FMath::IsFinite(Value) &&
         (!bHasRecord || (Direction == EArcadeRecordDirection::HigherWins ? Value > BestValue : Value < BestValue));
     const int32 Previous = OwnerSeat;
@@ -45,3 +51,4 @@ void AArcadeBoardCell::Resolve(const FArcadeMinigameResult& Result)
     if (Previous != OwnerSeat) OnOwnerChanged(Previous, OwnerSeat);
     OnChallengeResolved(Result, bBetter);
 }
+

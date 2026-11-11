@@ -1,5 +1,6 @@
 #include "ArcadeBoardGameMode.h"
 #include "ArcadeBoardRound.h"
+#include "ArcadeMinigamePresentation.h"
 #include "ArcadeBoardCharacter.h"
 #include "ArcadeInputSubsystem.h"
 #include "Camera/CameraActor.h"
@@ -29,6 +30,7 @@ void AArcadeBoardController::BeginPlay()
 
 AArcadeBoardGameMode::AArcadeBoardGameMode()
 {
+    PrimaryActorTick.bCanEverTick = true;
     PlayerControllerClass = AArcadeBoardController::StaticClass();
     DefaultPawnClass = nullptr;
     BoardCharacterClass = AArcadeBoardCharacter::StaticClass();
@@ -57,6 +59,10 @@ void AArcadeBoardGameMode::StartPlay()
         if (Camera) Camera->GetCameraComponent()->SetFieldOfView(CameraFOV);
     }
     if (!Camera) return;
+    BoardCamera = Camera;
+    CameraCenter = Camera->GetActorLocation();
+    CameraScreenRight = Camera->GetCameraComponent()->GetRightVector();
+    CameraPanOffset = 0.f;
     if (auto* PC = GetGameInstance()->GetFirstLocalPlayerController()) PC->SetViewTarget(Camera);
 
     // Tagged PlayerStarts make the seat mapping explicit and independent of enumeration order.
@@ -152,4 +158,29 @@ bool AArcadeBoardGameMode::ResetBoardCharacters()
         Character->SetActorTransform(SpawnTransforms[Seat], false, nullptr, ETeleportType::TeleportPhysics);
     }
     return true;
+}
+
+void AArcadeBoardGameMode::Tick(float DeltaSeconds)
+{
+    Super::Tick(DeltaSeconds);
+    bool bLeft = false, bRight = false;
+    for (TActorIterator<AArcadeMinigamePresentation> It(GetWorld()); It; ++It)
+    {
+        const int32 Seat = It->GetVisibleBoardWindowSeat();
+        bLeft |= Seat == 0;
+        bRight |= Seat == 1;
+    }
+    UpdateBoardCamera(bLeft, bRight, DeltaSeconds);
+}
+
+void AArcadeBoardGameMode::UpdateBoardCamera(bool bLeftWindow, bool bRightWindow, float DeltaSeconds)
+{
+    if (!IsValid(BoardCamera)) return;
+    const float Target = bEnableMinigameCameraPan && bLeftWindow != bRightWindow
+        ? (bLeftWindow ? -1.f : 1.f) * FMath::Max(0.f, MinigameCameraPanDistance) : 0.f;
+    const float Alpha = MinigameCameraPanSpeed <= 0.f ? 1.f
+        : 1.f - FMath::Exp(-MinigameCameraPanSpeed * FMath::Max(0.f, DeltaSeconds));
+    CameraPanOffset = FMath::Lerp(CameraPanOffset, Target, Alpha);
+    if (FMath::IsNearlyEqual(CameraPanOffset, Target, 0.01f)) CameraPanOffset = Target;
+    BoardCamera->SetActorLocation(CameraCenter + CameraScreenRight * CameraPanOffset);
 }

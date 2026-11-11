@@ -33,7 +33,20 @@ protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Arcade|Board") TObjectPtr<class UStaticMeshComponent> PlaceholderBody;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Arcade|Board") TObjectPtr<class UTextRenderComponent> SeatLabel;
 
+public:
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Arcade|Board|Hold Interaction", meta=(ClampMin="0.1", Units="s")) float ConfirmHoldSeconds = 1.f;
+    UFUNCTION(BlueprintPure, Category="Arcade|Board|Hold Interaction") float GetConfirmHoldProgress() const { return HoldProgress; }
+    UFUNCTION(BlueprintPure, Category="Arcade|Board|Hold Interaction") bool IsHoldingConfirm() const { return HoldCell.IsValid(); }
+protected:
+    /** Progress is 0..1. Inactive means hide the character's progress widget. */
+    UFUNCTION(BlueprintImplementableEvent, Category="Arcade|Board|Hold Interaction") void OnConfirmHoldProgressChanged(float Progress, bool bActive);
 private:
+    void ResetConfirmHold();
+    bool bConfirmDown = false;
+    float HoldElapsed = 0.f;
+    float HoldProgress = 0.f;
+    TWeakObjectPtr<class AArcadeBoardCell> HoldCell;
+
     int32 LogicalSeat = INDEX_NONE;
     float MovementYaw = 0.f;
     FVector2D MoveDirection = FVector2D::ZeroVector;

@@ -39,6 +39,9 @@ private:
     EArcadeRecordMetric Metric = EArcadeRecordMetric::Score;
     EArcadeRecordDirection Direction = EArcadeRecordDirection::HigherWins;
     void Assign(AArcadeBoardRound* Manager, UArcadeMinigameDefinition* Game);
+    double MinimumScore = 0;
+    double MaxCompletionSeconds = 0;
     void Resolve(const FArcadeMinigameResult& Result);
 };
+
 

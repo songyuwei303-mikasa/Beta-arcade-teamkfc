@@ -57,6 +57,22 @@ void AArcadeBoardCharacter::Tick(float DeltaSeconds)
     const FRotationMatrix Basis(FRotator(0, MovementYaw, 0));
     AddMovementInput(Basis.GetUnitAxis(EAxis::X), MoveDirection.Y);
     AddMovementInput(Basis.GetUnitAxis(EAxis::Y), MoveDirection.X);
+    if (HoldCell.IsValid())
+    {
+        auto* Input = GetGameInstance() ? GetGameInstance()->GetSubsystem<UArcadeInputSubsystem>() : nullptr;
+        if (!bConfirmDown || !Input || Input->GetInputReceiver(LogicalSeat) != this || !HoldCell->ContainsCharacter(this))
+        { ResetConfirmHold(); return; }
+        HoldElapsed += FMath::Max(0.f, DeltaSeconds);
+        HoldProgress = FMath::Clamp(HoldElapsed / FMath::Max(0.1f, ConfirmHoldSeconds), 0.f, 1.f);
+        if (HoldProgress >= 1.f)
+        {
+            auto* Cell = HoldCell.Get();
+            ResetConfirmHold(); // Clear before TryInteract switches input receivers.
+            if (IsValid(Cell)) Cell->TryInteract(this);
+        }
+        else OnConfirmHoldProgressChanged(HoldProgress, true);
+    }
+    else if (HoldProgress > 0.f) ResetConfirmHold();
 }
 
 void AArcadeBoardCharacter::ArcadeDirection_Implementation(int32 Seat, FVector2D Direction)
@@ -68,6 +84,12 @@ void AArcadeBoardCharacter::ArcadeDirection_Implementation(int32 Seat, FVector2D
 void AArcadeBoardCharacter::ArcadeButton_Implementation(int32 Seat, EArcadeInputAction Action, bool bPressed)
 {
     if (Seat != LogicalSeat || LogicalSeat == INDEX_NONE) return;
+    if (Action == EArcadeInputAction::Confirm)
+    {
+        if (!bPressed) { bConfirmDown = false; ResetConfirmHold(); return; }
+        if (bConfirmDown) return;
+        bConfirmDown = true;
+    }
     if (Action == EArcadeInputAction::Confirm && bPressed)
     {
         AArcadeBoardCell* Nearest = nullptr;
@@ -79,13 +101,21 @@ void AArcadeBoardCharacter::ArcadeButton_Implementation(int32 Seat, EArcadeInput
             if (Distance < BestDistance || (Distance == BestDistance && Nearest && It->GetPathName() < Nearest->GetPathName()))
             { Nearest = *It; BestDistance = Distance; }
         }
-        if (Nearest && Nearest->TryInteract(this)) return;
+        if (Nearest)
+        {
+            HoldCell = Nearest;
+            HoldElapsed = HoldProgress = 0.f;
+            OnConfirmHoldProgressChanged(0.f, true);
+        }
+        return;
     }
     OnBoardButton(Seat, Action, bPressed);
 }
 
 void AArcadeBoardCharacter::StopBoardMovement()
 {
+    bConfirmDown = false;
+    ResetConfirmHold();
     MoveDirection = FVector2D::ZeroVector;
     ConsumeMovementInputVector();
     GetCharacterMovement()->StopMovementImmediately();
@@ -105,4 +135,12 @@ void AArcadeBoardCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
             Input->SetInputReceiver(LogicalSeat, nullptr);
     StopBoardMovement();
     Super::EndPlay(EndPlayReason);
+}
+
+void AArcadeBoardCharacter::ResetConfirmHold()
+{
+    const bool bWasActive = HoldCell.IsValid() || HoldProgress > 0.f;
+    HoldCell.Reset();
+    HoldElapsed = HoldProgress = 0.f;
+    if (bWasActive) OnConfirmHoldProgressChanged(0.f, false);
 }

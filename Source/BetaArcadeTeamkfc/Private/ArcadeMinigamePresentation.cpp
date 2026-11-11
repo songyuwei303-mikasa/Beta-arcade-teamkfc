@@ -215,3 +215,9 @@ void AArcadeMinigamePresentation::EndPlay(const EEndPlayReason::Type Reason)
     RenderTarget = nullptr;
     Super::EndPlay(Reason);
 }
+
+int32 AArcadeMinigamePresentation::GetVisibleBoardWindowSeat() const
+{
+    return !bFullscreen && IsValid(Frame) && Frame->IsInViewport() && Frame->IsVisible()
+        ? PresentationSeat : INDEX_NONE;
+}
