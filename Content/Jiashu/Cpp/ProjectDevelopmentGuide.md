@@ -1,3 +1,5 @@
+2026-10-28 最新补充：工程已迁移 UE5.7，主要目录 F:\UnrealProject\BetaArcadeTeamKFC_UE57\BetaArcadeTeamkfc。三连中的格子被对手挑战时暂缓判胜，挑战结束重新检查；Definition 新增 MinimumScore 与 MaxCompletionSeconds，具体规则及验证见 MatchFlow.md 末尾。下文 UE5.8 路径与立即判胜是历史记录。
+
 # Beta Arcade：项目开发约定与交接
 
 **引擎迁移完成（2026-10-22）：** 本目录现在是 UE **5.7.4** 工程，EngineAssociation=5.7。原 15 个资源和 3 张地图已在 5.7 重建，玩法 C++ 保持一致；13 项编辑器测试和 4 项真实 GPU 运行测试全部通过、零测试警告。Windows 打包成功，打包程序另通过 4 项运行测试。原 5.8 工程保留在旧目录。打开方式、Git 分支、验证证据及人工验收范围见 [UE57Migration.md](UE57Migration.md)。
@@ -307,3 +309,4 @@ Windows XInput + 原生 Sony DirectInput 已实现。Sony 当前识别 DualShock
 - 多次进入／退出不残留 Actor、计时器、事件绑定、声音、Widget 或渲染目标。
 - 原点独立测试和偏移后的实例均可运行；独立测试与画中画构图／比例一致。
 - 棋盘＋两个真实小游戏同时运行时验证帧率和资源占用，并检查灯光、音频和后处理串扰。
+

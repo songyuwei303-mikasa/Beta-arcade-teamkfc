@@ -21,6 +21,10 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Arcade") TSoftObjectPtr<UWorld> Map;
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Arcade") EArcadeRecordMetric Metric = EArcadeRecordMetric::Score;
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Arcade") EArcadeRecordDirection Direction = EArcadeRecordDirection::HigherWins;
+    /** Score metric only. Equal to the minimum qualifies. Set above zero to exclude zero scores. */
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Arcade") double MinimumScore = 0;
+    /** All metrics: successful completion after this time cannot claim a cell. Zero disables. */
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Arcade", meta=(ClampMin="0")) double MaxCompletionSeconds = 0;
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Arcade") TArray<EArcadeChallengeTag> ChallengeTags;
 };
 
@@ -35,3 +39,4 @@ public:
     UFUNCTION(BlueprintPure, Category="Arcade") TArray<UArcadeMinigameDefinition*> GetUniqueGames() const;
     static TArray<int32> Allocate(int32 GameCount, int32 CellCount, FRandomStream& Random);
 };
+

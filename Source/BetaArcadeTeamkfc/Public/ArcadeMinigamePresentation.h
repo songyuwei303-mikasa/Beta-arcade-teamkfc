@@ -79,6 +79,8 @@ public:
     bool Initialize(AArcadeMinigameEntry* InEntry, int32 Seat, const FArcadePresentationSettings& Settings, bool bFullscreen = false);
     virtual void Tick(float DeltaSeconds) override;
     virtual void EndPlay(const EEndPlayReason::Type Reason) override;
+    /** Includes opening/closing; excludes standalone fullscreen presentation. */
+    int32 GetVisibleBoardWindowSeat() const;
     bool IsReady() const;
     bool HasFailed() const { return bFailed; }
     void BeginClose(FArcadeMinigameResult Result);
